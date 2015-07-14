@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.GregorianCalendar;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SpinnerDateModel;
@@ -36,6 +38,8 @@ import logic.EventRepository;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.JTable;
 import javax.swing.JLabel;
@@ -74,6 +78,10 @@ public class NewEventView extends JDialog {
 	private MainView parent;
 	private JCheckBox boxAltEntry;
 	private JTextArea altEntryField;
+	private JTextField stockNameField;
+	private JCheckBox boxStock;
+	private JSpinner stockSymbolSpinner;
+	private JFormattedTextField stockValueField;
 
 	/**
 	 * Launch the application.
@@ -96,7 +104,7 @@ public class NewEventView extends JDialog {
 		setTitle("New Event");
 		this.parent = parent;
 		setResizable(false);
-		setBounds(100, 100, 578, 354);
+		setBounds(100, 100, 596, 354);
 		getContentPane().setLayout(null);
 		contentPanel.setBounds(0, 0, 0, 0);
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -105,7 +113,7 @@ public class NewEventView extends JDialog {
 		Calendar cal = Calendar.getInstance();
 		{
 			JPanel buttonPane = new JPanel();
-			buttonPane.setBounds(266, 282, 296, 33);
+			buttonPane.setBounds(284, 282, 296, 33);
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane);
 			{
@@ -240,24 +248,63 @@ public class NewEventView extends JDialog {
 						}
 					});
 
-					// Description textfiel
+					// Description textfield
 					CustomDocument document3 = new CustomDocument(50);
 					descField = new JTextField(document3, "", 0);
 					boxDesc = new JCheckBox("Description:");
-					boxDesc.setBounds(10, 214, 97, 20);
+					boxDesc.setBounds(10, 245, 97, 20);
 					getContentPane().add(boxDesc);
-					descField.setBounds(127, 214, 111, 26);
+					descField.setBounds(127, 245, 111, 26);
 					getContentPane().add(descField);
+					
+					
+					//Stock data
+					CustomDocument document4 = new CustomDocument(5);
+					stockNameField = new JTextField(document4, "", 0);
+					stockNameField.addKeyListener(new KeyAdapter() {
+						@Override
+						public void keyTyped(KeyEvent key) {
+							char c = key.getKeyChar();
+							if (!(Character.isLetter(c) || Character.isDigit(c)
+									|| (c == KeyEvent.VK_BACK_SPACE)
+									|| (c == KeyEvent.VK_DELETE) || (Character
+									.isSpaceChar(c)))) {
+								getToolkit().beep();
+								key.consume();
+							}
+
+						}
+					});
+					CustomDocument document5 = new CustomDocument(10);
+					stockValueField = new JFormattedTextField(NumberFormat.getNumberInstance());
+					stockValueField.setDocument(document5);
+					stockValueField .setValue(new Double(0));
+					
+					stockValueField .setColumns(2);
+					
+					boxStock = new JCheckBox("Stock:");
+					boxStock.setBounds(10, 214, 88, 20);
+					getContentPane().add(boxStock);
+					stockNameField.setBounds(127, 214, 42, 26);
+					getContentPane().add(stockNameField);
+					stockValueField.setBounds(219, 214, 42, 26);
+					getContentPane().add(stockValueField);
+					SpinnerModel stockSymbolModel = new SpinnerListModel(
+							new ArrayList<String>(Arrays.asList("<", ">")));
+					stockSymbolSpinner = new JSpinner(stockSymbolModel);
+					stockSymbolSpinner.setBounds(173, 214, 42, 26);
+					getContentPane().add(stockSymbolSpinner);
+	
 				}
 			}
 		}
 
 		boxAltEntry = new JCheckBox("Alternate entry:");
-		boxAltEntry.setBounds(266, 59, 105, 20);
+		boxAltEntry.setBounds(284, 14, 105, 20);
 		getContentPane().add(boxAltEntry);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(266, 86, 296, 114);
+		scrollPane.setBounds(284, 55, 296, 114);
 		getContentPane().add(scrollPane);
 
 		altEntryField = new JTextArea();
@@ -268,7 +315,7 @@ public class NewEventView extends JDialog {
 
 		JLabel lblExampleEntrytime = new JLabel(
 				"Example: #time 11:45 #name MyEvent #temperature >10");
-		lblExampleEntrytime.setBounds(266, 217, 296, 14);
+		lblExampleEntrytime.setBounds(284, 186, 296, 14);
 		getContentPane().add(lblExampleEntrytime);
 	}
 
@@ -576,7 +623,13 @@ public class NewEventView extends JDialog {
 								return;
 							}
 							event.setDescription(splitInput[1]);
-						} else { // hash input not valid
+						} else if (splitInput[0].equalsIgnoreCase("stock")){
+							//TODO
+						}
+						
+						
+						
+						else { // hash input not valid
 							JOptionPane
 									.showMessageDialog(
 											null,
@@ -735,6 +788,14 @@ public class NewEventView extends JDialog {
 						event.setLocation(location);
 						selection = true;
 					}
+					if(boxStock.isSelected()){
+						String stockName = stockNameField.getText();
+						stockName = stockName.trim();
+						String stockSymbol = (String) stockSymbolSpinner.getValue();
+						String stockValue = stockValueField.getText();
+						event.setStock(stockName + ":" + stockSymbol + ":" + stockValue);
+						selection = true;
+					}
 					if (boxDesc.isSelected()) {
 						String description = (String) descField.getText();
 						event.setDescription(description);
@@ -746,7 +807,13 @@ public class NewEventView extends JDialog {
 							JOptionPane.showMessageDialog(null,
 									"Please enter a name for the event",
 									"Warning", JOptionPane.WARNING_MESSAGE);
-						} else {
+						} else if(boxStock.isSelected() && (event.getStock().split(":")[0].equals("") || event.getStock().split(":")[0].equals(" "))){
+							JOptionPane.showMessageDialog(null,
+									"Please enter a name for the stock",
+									"Warning", JOptionPane.WARNING_MESSAGE);
+						
+						}else {
+						
 							try {
 								event.setName(name);
 								event.sendToDB(); // send the event to the
@@ -797,4 +864,6 @@ public class NewEventView extends JDialog {
 			}
 		}
 	}
+
+
 }

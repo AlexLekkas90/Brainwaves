@@ -17,9 +17,10 @@ public class BrainwavesEvent {
 	private String time; // TODO specify formats
 	private String temperature;
 	private String location;
+	private String stock;
 	private String description;
 	private int activeConditions;
-	private static int totalConditions = 4;
+	private static int totalConditions = 6;
 
 	/**
 	 * Constructor for an empty event
@@ -32,6 +33,7 @@ public class BrainwavesEvent {
 		time = "EMPTY";
 		temperature = "EMPTY";
 		location = "EMPTY";
+		stock = "EMPTY";
 		description = "EMPTY";
 		activeConditions = 0;
 	}
@@ -44,16 +46,18 @@ public class BrainwavesEvent {
 	 * @param time the event time in the format hh:mm
 	 * @param location the location of the event
 	 * @param temperature the temperature in the format >:temp
+	 * @param stock the stock in the format stockname:>:stockvalue
 	 * @param description a short description of the event
 	 */
 	public BrainwavesEvent(String name, String date, String day, String time,
-			String location, String temperature, String description) {
+			String location, String temperature, String stock, String description) {
 		this.name = name;
 		this.date = date;
 		this.day = day;
 		this.time = time;
 		this.location = location;
 		this.temperature = temperature;
+		this.stock = stock;
 		this.description = description;
 		updateActiveConditions();
 	}
@@ -75,6 +79,9 @@ public class BrainwavesEvent {
 			activeConditions++;
 		}
 		if (!temperature.equals("EMPTY")) {
+			activeConditions++;
+		}
+		if (!stock.equals("EMPTY")) {
 			activeConditions++;
 		}
 	}
@@ -132,6 +139,14 @@ public class BrainwavesEvent {
 		this.location = location;
 		updateActiveConditions();
 	}
+	
+	/**
+	 * 
+	 * @param stock the stock data
+	 */
+	public void setStock(String stock){
+		this.stock = stock;
+	}
 
 	/**
 	 * @return the event date
@@ -167,6 +182,13 @@ public class BrainwavesEvent {
 	public String getLocation() {
 		return location;
 	}
+	/**
+	 * 
+	 * @return the event stock data
+	 */
+	public String getStock(){
+		return stock;
+	}
 
 	/**
 	 * @return the event description
@@ -189,7 +211,7 @@ public class BrainwavesEvent {
 	 */
 	public String toStringFull() {
 		return name + ";" + date + ";" + day + ";" + time + ";" + location
-				+ ";" + temperature + ";" + description;
+				+ ";" + temperature + ";" + stock + ";" + description;
 	}
 
 	/* (non-Javadoc)
@@ -211,7 +233,7 @@ public class BrainwavesEvent {
 			Class.forName("org.sqlite.JDBC");
 			c = DriverManager.getConnection("jdbc:sqlite:BrainwavesDB.db");
 			c.setAutoCommit(false);
-			//TODO Delete SQL injection vulnerable code
+			//TODO Delete SQL injection vulnerable code and pre stock
 //			stmt = c.prepareStatement("INSERT INTO EVENTS (NAME,DATE,DAY,TIME,LOCATION,TEMPERATURE,DESCRIPTION) "
 //					+ "VALUES ('"
 //					+ getName()
@@ -244,15 +266,16 @@ public class BrainwavesEvent {
 //					+ "','"
 //					+ getDescription()
 //					+ "');";
-			stmt = c.prepareStatement("INSERT INTO EVENTS (NAME,DATE,DAY,TIME,LOCATION,TEMPERATURE,DESCRIPTION) "
-					+ "VALUES (?, ?, ?, ?, ?, ?, ?)");
+			stmt = c.prepareStatement("INSERT INTO EVENTS (NAME,DATE,DAY,TIME,LOCATION,TEMPERATURE,STOCK,DESCRIPTION) "
+					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 			stmt.setString(1, getName());
 			stmt.setString(2, getDate());
 			stmt.setString(3, getDay());
 			stmt.setString(4, getTime());
 			stmt.setString(5, getLocation());
 			stmt.setString(6, getTemperature());
-			stmt.setString(7, getDescription());
+			stmt.setString(6, getStock());
+			stmt.setString(8, getDescription());
 			
 			stmt.executeUpdate();
 			stmt.close();
@@ -273,6 +296,7 @@ public class BrainwavesEvent {
 		return activeConditions;
 	}
 
+	//TODO delete?
 	/**
 	 * @return the number of total conditions
 	 */
@@ -299,8 +323,12 @@ public class BrainwavesEvent {
 			output = output + " when in " + location;
 		}
 		if (!temperature.equals("EMPTY")) {
-			output = output + " wih temperature " + temperature.split(":")[0]
+			output = output + " with temperature " + temperature.split(":")[0]
 					+ " " + temperature.split(":")[1];
+		}
+		if (!stock.equals("EMPTY")) {
+			output = output + " with stock " + stock.split(":")[0]
+					+ " " + stock.split(":")[1] + " " + stock.split(":")[2];
 		}
 		if (!description.equals("EMPTY")) {
 			output = output + ", additional information: " + description;
@@ -329,6 +357,10 @@ public class BrainwavesEvent {
 		if (!temperature.equals("EMPTY")) {
 			output = output + "Temperature: " + temperature.split(":")[0] + " "
 					+ temperature.split(":")[1] + "\n";
+		}
+		if (!stock.equals("EMPTY")) {
+			output = output + "Stock: " + stock.split(":")[0] + " "
+					+ stock.split(":")[1] + " "  + stock.split(":")[2] + "\n";
 		}
 		if (!description.equals("EMPTY")) {
 			output = output + "Description: " + description + "\n";
