@@ -9,6 +9,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -20,6 +21,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -41,7 +43,6 @@ import logic.EventRepository;
  *	Advanced search class, this class performs a more detailed search on the provided EventRepository and displays the results in the same way that regular search does.
  */
 public class AdvancedSearchView extends JDialog {
-
 	private final JPanel contentPanel = new JPanel();
 	private JCheckBox boxDate;
 	private JSpinner daySpinner;
@@ -70,6 +71,11 @@ public class AdvancedSearchView extends JDialog {
 //			e.printStackTrace();
 //		}
 //	}
+	private JTextField stockNameField;
+	private JFormattedTextField stockValueField;
+	private JCheckBox boxStockName;
+	private JSpinner stockSymbolSpinner;
+	private JCheckBox boxStockValue;
 
 
 	/**
@@ -215,6 +221,48 @@ public class AdvancedSearchView extends JDialog {
 //		    group.add(boxDate);
 //		    group.add(boxDateRange);
 			
+			
+			
+			//Stock data
+			CustomDocument document4 = new CustomDocument(5);
+			stockNameField = new JTextField(document4, "", 0);
+			stockNameField.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyTyped(KeyEvent key) {
+					char c = key.getKeyChar();
+					if (!(Character.isLetter(c) || Character.isDigit(c)
+							|| (c == KeyEvent.VK_BACK_SPACE)
+							|| (c == KeyEvent.VK_DELETE) || (Character
+							.isSpaceChar(c)))) {
+						getToolkit().beep();
+						key.consume();
+					}
+
+				}
+			});
+			CustomDocument document5 = new CustomDocument(10);
+			stockValueField = new JFormattedTextField(NumberFormat.getNumberInstance());
+			stockValueField.setDocument(document5);
+			stockValueField .setValue(new Double(0));
+			
+			stockValueField .setColumns(2);
+			
+			boxStockName = new JCheckBox("Stock Name:");
+			boxStockName.setBounds(6, 161, 88, 20);
+			contentPanel.add(boxStockName);
+			boxStockValue = new JCheckBox("Stock Value:");
+			boxStockValue.setBounds(6, 198, 88, 20);
+			contentPanel.add(boxStockValue);
+			stockNameField.setBounds(132, 161, 42, 26);
+			contentPanel.add(stockNameField);
+			stockValueField.setBounds(178, 198, 42, 26);
+			contentPanel.add(stockValueField);
+			SpinnerModel stockSymbolModel = new SpinnerListModel(
+					new ArrayList<String>(Arrays.asList("<", ">")));
+			stockSymbolSpinner = new JSpinner(stockSymbolModel);
+			stockSymbolSpinner.setBounds(132, 198, 42, 26);
+			contentPanel.add(stockSymbolSpinner);
+			
 			// button menu
 			{
 				JButton searchButton = new JButton("Search");
@@ -257,6 +305,12 @@ public class AdvancedSearchView extends JDialog {
 					selectionMin++;
 				}
 				if(boxTemp.isSelected()){
+					selectionMin++;
+				}
+				if(boxStockName.isSelected()){
+					selectionMin++;
+				}
+				if(boxStockValue.isSelected()){
 					selectionMin++;
 				}
 				
@@ -324,6 +378,25 @@ public class AdvancedSearchView extends JDialog {
 							}
 						}
 					}
+					if(boxStockName.isSelected()){
+						if (!currentEvent.getStock().equals("EMPTY")) {
+							String stockName = currentEvent.getStock().split(":")[0];
+							if(stockName.contains(stockNameField.getText())){
+								numOfMatches ++;
+							}
+						}
+					}
+					
+						if (boxStockValue.isSelected()) {
+							if (!currentEvent.getStock().equals("EMPTY")) {
+								String symbol = currentEvent.getStock().split(":")[1];
+								String stockVal = currentEvent.getStock().split(":")[2];
+								if (symbol.equals(stockSymbolSpinner.getValue()) && stockVal.equals(stockValueField.getValue())) {
+									numOfMatches ++;
+									
+								}
+							}
+						}
 					
 					if(numOfMatches == selectionMin){
 					searchResults.add(currentEvent);

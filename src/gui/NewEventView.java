@@ -625,6 +625,85 @@ public class NewEventView extends JDialog {
 							event.setDescription(splitInput[1]);
 						} else if (splitInput[0].equalsIgnoreCase("stock")){
 							//TODO
+							String tempStock = splitInput[1].replaceAll("\\s+", "");// remove
+							// whitespace
+							//look for first < or >
+							int counter = 0;
+							boolean notFound = true;
+							String symbol = "EMPTY";
+							while (counter < tempStock.length() && notFound){
+								if(tempStock.charAt(counter) == '<' || tempStock.charAt(counter) == '>'){
+								notFound = false;
+								symbol = tempStock.charAt(counter) + "";
+								}
+								counter++;
+							}
+							
+							//check whether < or > found
+							if(symbol.equals("EMPTY")){
+								JOptionPane
+								.showMessageDialog(
+										null,
+										"Please enter a valid stock",
+										"Warning",
+										JOptionPane.WARNING_MESSAGE);
+						return;
+							}
+							
+							//< or > found now check whether name and value are valid
+							String[] splitStock = tempStock.split(symbol);
+							if (splitStock.length > 2){ // check there was only one > or <
+								JOptionPane
+								.showMessageDialog(
+										null,
+										"Please enter a valid stock",
+										"Warning",
+										JOptionPane.WARNING_MESSAGE);
+						return;
+							}
+							//check stock name
+							if(splitStock[0].length() > 5){
+								JOptionPane
+								.showMessageDialog(
+										null,
+										"Please enter a shorter stock name",
+										"Warning",
+										JOptionPane.WARNING_MESSAGE);
+						return;
+							}
+							for (int i = 0; i < splitStock[0].length(); i++) {
+								if ((!Character.isLetter(splitStock[0]
+										.charAt(i)))
+										&& !(Character.isDigit(splitStock[0].charAt(i)))) {
+									JOptionPane.showMessageDialog(null,
+											"Please enter a valid stock name",
+											"Warning",
+											JOptionPane.WARNING_MESSAGE);
+									return;
+								}
+							}
+							
+							
+							//check stock value
+							if(splitStock[1].length() > 10){
+								JOptionPane.showMessageDialog(null,
+										"Please enter a shorter stock value",
+										"Warning",
+										JOptionPane.WARNING_MESSAGE);
+								return;
+							}
+							
+							try {
+								double tempStockValue = Double.parseDouble(splitStock[1]);
+
+							} catch (NumberFormatException nfe) {
+								JOptionPane.showMessageDialog(null,
+										"Please enter a valid stock price",
+										"Warning", JOptionPane.WARNING_MESSAGE);
+								return;
+							}
+							
+							event.setStock(splitStock[0] + ":" + symbol + ":" + splitStock[1]);
 						}
 						
 						

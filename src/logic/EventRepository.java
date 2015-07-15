@@ -46,7 +46,7 @@ public class EventRepository {
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM Events;");
-			String name, day, date, time, location, temperature, description = "";
+			String name, day, date, time, location, temperature, stock, description = "";
 			while (rs.next()) {
 				name = rs.getString("name");
 				day = rs.getString("day");
@@ -54,9 +54,11 @@ public class EventRepository {
 				time = rs.getString("time");
 				location = rs.getString("location");
 				temperature = rs.getString("temperature");
+				stock = rs.getString("stock");
 				description = rs.getString("description");
+				
 				events.add(new BrainwavesEvent(name, date, day, time, location,
-						temperature, description));
+						temperature, stock, description));
 			}
 			rs.close();
 			stmt.close();
@@ -587,6 +589,11 @@ public class EventRepository {
 		}
 		if (!currentEvent.getTemperature().equals("EMPTY")) {
 			if (currentEvent.getTemperature().contains(searchString)) {
+				return true;
+			}
+		}
+		if (!currentEvent.getStock().equals("EMPTY")) {
+			if (currentEvent.getStock().contains(searchString)) {
 				return true;
 			}
 		}
