@@ -249,9 +249,26 @@ public class EventRepository {
 
 			String stockName = currentEvent.getStock().split(":")[0];
 			String stockSymbol = currentEvent.getStock().split(":")[1];
-			double stockPrice = Double.parseDouble(currentEvent.getStock().split(":")[2]);
+			double eventStockPrice = Double.parseDouble(currentEvent.getStock().split(":")[2]);
 			Stock stock = stocks.get(stockName);
+			//TODO del testing
+			System.out.println(stock.getQuote().getPrice());
+			System.out.println(stock.getQuote().toString());
 			//TODO implement checking of stocks
+			if(stock.getQuote().getAsk().doubleValue() == 0 && stock.getQuote().getBid().doubleValue() == 0 && stock.getQuote().getPrice().doubleValue() == 0
+					 && stock.getQuote().getPreviousClose().doubleValue() == 0){ // 4 stock values at 0 most likely invalid stock
+				return false;
+			}
+			double stockPrice = stock.getQuote().getPrice().doubleValue();
+			if(stockSymbol.equals("<")){
+				if(stockPrice <= eventStockPrice){
+					conditionsLeft = conditionsLeft -1;
+				}
+			} else {
+				if(stockPrice >= eventStockPrice){
+					conditionsLeft = conditionsLeft -1;
+				}
+			}
 			
 			
 		}
