@@ -274,7 +274,7 @@ public class BrainwavesEvent {
 			stmt.setString(4, getTime());
 			stmt.setString(5, getLocation());
 			stmt.setString(6, getTemperature());
-			stmt.setString(6, getStock());
+			stmt.setString(7, getStock());
 			stmt.setString(8, getDescription());
 			
 			stmt.executeUpdate();

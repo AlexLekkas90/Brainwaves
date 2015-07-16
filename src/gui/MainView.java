@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.EventQueue;
+import java.awt.Window;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
@@ -15,8 +16,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.Timer;
 
@@ -57,7 +63,7 @@ import javax.swing.JButton;
  *         class where the majority of event checking takes place, for each new
  *         event task added. Edit the SQLite statements that create a table,
  *         send and receive data from the DB. Modify the search function in the
- *         repository to account for the new task. Change the advanced search class
+ *         repository to account for the new task. Change the advanced search class.
  */
 public class MainView {
 
@@ -65,6 +71,7 @@ public class MainView {
 	private static EventRepository eventRepo; //holds all the events taken from DB, refreshed according to eventScheduler
 	private static JList<BrainwavesEvent> activeEventsList; //list of active events
 	private JTextField txtSearch; // search text field
+	private JTextField txtNewEvent;
 	private static JLabel lblDate;
 	private static JLabel lblTime;
 	private static JLabel lblLocation;
@@ -72,6 +79,8 @@ public class MainView {
 	private static DefaultListModel<BrainwavesEvent> activeEventsModel; //active events model for the active events list
 	private static JList<BrainwavesEvent> upcomingEventsList; // list of events within the next week
 	private static DefaultListModel<BrainwavesEvent> upcomingEventsModel; //upcoming events model for the upcoming events list
+	private JButton btnNewEvent;
+	private JButton btnGo;
 
 	/**
 	 * Launch the application.
@@ -112,6 +121,8 @@ public class MainView {
 					time.schedule(timeScheduler, 0, 2000);
 					
 					InfoPanelScheduler infoPanelScheduler = new InfoPanelScheduler(lblTemperature, lblLocation);
+					
+					
 					time.schedule(infoPanelScheduler, 0, 3600000);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -171,6 +182,15 @@ public class MainView {
 		mntmAdvancedSearch.setActionCommand("Advanced search");
 		mntmAdvancedSearch.addActionListener(new MyActionListener());
 		mnEvent.add(mntmAdvancedSearch);
+		
+		JMenu mnHelp = new JMenu("Help");
+		menuBar.add(mnHelp);
+		
+		JMenuItem mntmAbout = new JMenuItem("About");
+		mnHelp.add(mntmAbout);
+		
+		JMenuItem mntmQuickGuide = new JMenuItem("Quick Guide");
+		mnHelp.add(mntmQuickGuide);
 		frmBrainwaves.getContentPane().setLayout(null);
 		
 		// Active events
@@ -232,20 +252,37 @@ public class MainView {
 		// search
 		txtSearch = new JTextField();
 		txtSearch.setText("Search");
-		txtSearch.setBounds(439, 11, 103, 27);
+		txtSearch.setBounds(438, 11, 96, 27);
 
-		txtSearch.addFocusListener(new MyFocusListener());
+		txtSearch.addFocusListener(new MySearchFocusListener());
 		frmBrainwaves.getContentPane().add(txtSearch);
 		txtSearch.setColumns(10);
 		txtSearch.addKeyListener(new SearchKeyListener());
 
-		// Search button
-		JButton btnGo = new JButton("Go");
+		btnGo = new JButton("Go");
 		btnGo.setActionCommand("Search");
 		btnGo.setBounds(544, 11, 56, 27);
 		btnGo.addActionListener(new MyActionListener());
 		frmBrainwaves.getContentPane().add(btnGo);
+		
+		//new event alt
+		txtNewEvent = new JTextField();
+		txtNewEvent.setText("Quick event");
+		txtNewEvent.setBounds(396, 49, 138, 27);
 
+		txtNewEvent.addFocusListener(new MyAddFocusListener());
+		frmBrainwaves.getContentPane().add(txtNewEvent);
+		txtNewEvent.setColumns(10);
+		txtNewEvent.addKeyListener(new NewEventKeyListener());
+		btnNewEvent = new JButton("Add");
+		btnNewEvent.setActionCommand("Add");
+		btnNewEvent.setBounds(544, 49, 56, 27);
+		btnNewEvent.addActionListener(new MyActionListener());
+		frmBrainwaves.getContentPane().add(btnNewEvent);
+		JLabel exampleLbl = new JLabel("Example: #time 11:45 #name MyEvent ");
+		exampleLbl.setBounds(396, 87, 204, 14);
+		frmBrainwaves.getContentPane().add(exampleLbl);
+				
 	}
 	/**
 	 * Create a DB table if it doesn't exist
@@ -314,7 +351,412 @@ public class MainView {
 						&& !txtSearch.getText().equals("")) {
 					search(txtSearch.getText());
 				}
+			} else if (action.equals("Add")){
+				if (!txtNewEvent.getText().equals("Quick event")
+						&& !txtNewEvent.getText().equals("")) {
+					BrainwavesEvent event = new BrainwavesEvent();
+					String[] splitRawInputTemp = txtNewEvent.getText().split(
+							"#");
+					String[] splitRawInput = new String[splitRawInputTemp.length - 1];
+					for (int i = 1; i < splitRawInputTemp.length; i++) {
+						splitRawInput[i - 1] = splitRawInputTemp[i];
+					}
+					int length = splitRawInput.length;
+					int count = 0;
+					while (count < length) {
+						String[] splitInput = new String[] { "", "" };
+						int charCount = 0;
+						while (charCount < splitRawInput[count].length()
+								&& splitRawInput[count].charAt(charCount) != (' ')) {
+							splitInput[0] = splitInput[0]
+									+ splitRawInput[count].charAt(charCount);
+							charCount++;
+						}
+						splitInput[1] = splitRawInput[count]
+								.substring(charCount + 1);// splitInput[0]
+															// contains hash
+															// data type while
+															// [1] contains
+															// actual data
+						splitInput[1] = splitInput[1].trim();
+						if(splitInput[1].equals("")){
+							JOptionPane
+							.showMessageDialog(
+									null,
+									"Please enter a value after a condition",
+									"Warning",
+									JOptionPane.WARNING_MESSAGE);
+							return;
+						}
+						if (splitInput[0].equalsIgnoreCase("name")) { // check
+																		// for
+																		// name
+							if (splitInput[1].length() > 20) {
+								JOptionPane
+										.showMessageDialog(
+												null,
+												"Please enter a name under 20 characters",
+												"Warning",
+												JOptionPane.WARNING_MESSAGE);
+								return;
+							}
+							for (int i = 0; i < splitInput[1].length(); i++) {
+								if ((!Character.isLetter(splitInput[1]
+										.charAt(i)))
+										&& !(splitInput[1].charAt(i) == ' ') && (!Character.isDigit(splitInput[1]
+										.charAt(i)))) {
+									JOptionPane.showMessageDialog(null,
+											"Please enter a valid name",
+											"Warning",
+											JOptionPane.WARNING_MESSAGE);
+									return;
+								}
+							}
+							
+							event.setName(splitInput[1]);
+						} else if (splitInput[0].equalsIgnoreCase("date")) { // check
+																				// for
+																				// date
+							if (splitInput[1].charAt(1) != '/'
+									&& splitInput[1].charAt(2) != '/') {
+								JOptionPane
+										.showMessageDialog(
+												null,
+												"Please enter a date in the format MM/yyyy",
+												"Warning",
+												JOptionPane.WARNING_MESSAGE);
+								return;
+							}
+							String[] splitDate = splitInput[1].split("/");
+							try {
+								int monthNum = Integer.parseInt(splitDate[0]);
+								int yearNum = Integer.parseInt(splitDate[1]);
+								String monthString = monthNum + "";
+								if (monthNum < 10) {
+									monthString = "0" + monthNum;
+								}
+								if (monthNum > 0
+										&& monthNum < 13
+										&& yearNum >= Calendar.getInstance()
+												.get(Calendar.YEAR)
+										&& yearNum < Calendar.getInstance()
+												.get(Calendar.YEAR) + 10) {
+									event.setDate(monthString + "/" + yearNum);
+								} else {
+									JOptionPane.showMessageDialog(null,
+											"Please enter a valid date",
+											"Warning",
+											JOptionPane.WARNING_MESSAGE);
+									return;
+								}
+
+							} catch (NumberFormatException nfe) {
+								JOptionPane.showMessageDialog(null,
+										"Please enter a valid date", "Warning",
+										JOptionPane.WARNING_MESSAGE);
+								return;
+							}
+
+						} else if (splitInput[0].equalsIgnoreCase("day")) { // check
+																			// for
+																			// day
+							try {
+								int dayNum = Integer.parseInt(splitInput[1]);
+								if (dayNum > 0 && dayNum < 32) {
+									String dayString = "" + dayNum;
+									if (dayNum < 10) {
+										dayString = "0" + dayNum;
+									}
+									event.setDay(dayString);
+								} else {
+									JOptionPane.showMessageDialog(null,
+											"Please enter a valid day", "Warning",
+											JOptionPane.WARNING_MESSAGE);
+									return;
+								}
+
+							} catch (NumberFormatException nfe) {
+								JOptionPane.showMessageDialog(null,
+										"Please enter a valid day", "Warning",
+										JOptionPane.WARNING_MESSAGE);
+								return;
+							}
+
+						} else if (splitInput[0].equalsIgnoreCase("time")) { // check
+																				// for
+																				// time
+							if (splitInput[1].charAt(1) != ':'
+									&& splitInput[1].charAt(2) != ':') {
+								JOptionPane
+										.showMessageDialog(
+												null,
+												"Please enter a time in the format hh:mm",
+												"Warning",
+												JOptionPane.WARNING_MESSAGE);
+								return;
+							}
+							String[] timeString = splitInput[1].split(":");
+							try {
+								int hourNum = Integer.parseInt(timeString[0]);
+								int minNum = Integer.parseInt(timeString[1]);
+								if (hourNum > -1 && hourNum < 24 && minNum > -1
+										&& minNum < 60) {
+									event.setTime(hourNum + ":" + minNum);
+								} else {
+									JOptionPane.showMessageDialog(null,
+											"Please enter a valid time",
+											"Warning",
+											JOptionPane.WARNING_MESSAGE);
+									return;
+								}
+
+							} catch (NumberFormatException nfe) {
+								JOptionPane.showMessageDialog(null,
+										"Please enter a valid time", "Warning",
+										JOptionPane.WARNING_MESSAGE);
+								return;
+							}
+
+						} else if (splitInput[0].equalsIgnoreCase("location")) { // check
+																					// for
+																					// location
+							if (splitInput[1].length() > 30) {
+								JOptionPane
+										.showMessageDialog(
+												null,
+												"Please enter a location under 30 characters",
+												"Warning",
+												JOptionPane.WARNING_MESSAGE);
+								return;
+							}
+							for (int i = 0; i < splitInput[1].length(); i++) {
+								if ((!Character.isLetter(splitInput[1]
+										.charAt(i)))
+										&& !(splitInput[1].charAt(i) == ' ')) {
+									JOptionPane.showMessageDialog(null,
+											"Please enter a valid location",
+											"Warning",
+											JOptionPane.WARNING_MESSAGE);
+									return;
+								}
+							}
+							event.setLocation(splitInput[1]);
+
+						} else if (splitInput[0]
+								.equalsIgnoreCase("temperature")) { // check for
+																	// temperature
+							String temp = splitInput[1].replaceAll("\\s+", "");// remove
+																				// whitespace
+							char symbol = temp.charAt(0);
+							String tempString = temp.substring(1);
+							if (symbol != '<' && symbol != '>') {
+								JOptionPane.showMessageDialog(null,
+										"Please enter < or >", "Warning",
+										JOptionPane.WARNING_MESSAGE);
+								return;
+							}
+							try {
+								int tempNum = Integer.parseInt(tempString);
+								if (tempNum >= -30 && tempNum <= 60) {
+									event.setTemperature("" + symbol + ":"
+											+ tempNum);
+								} else {
+									JOptionPane
+											.showMessageDialog(
+													null,
+													"Please enter a valid temperature between -30 and 60 degrees",
+													"Warning",
+													JOptionPane.WARNING_MESSAGE);
+									return;
+								}
+
+							} catch (NumberFormatException nfe) {
+								JOptionPane.showMessageDialog(null,
+										"Please enter a valid temperature",
+										"Warning", JOptionPane.WARNING_MESSAGE);
+								return;
+							}
+
+						} else if (splitInput[0]
+								.equalsIgnoreCase("description")) { // check for
+																	// description
+							if (splitInput[1].length() > 50) {
+								JOptionPane
+										.showMessageDialog(
+												null,
+												"Please enter a description under 50 characters",
+												"Warning",
+												JOptionPane.WARNING_MESSAGE);
+								return;
+							}
+							event.setDescription(splitInput[1]);
+						} else if (splitInput[0].equalsIgnoreCase("stock")){
+							//TODO
+							String tempStock = splitInput[1].replaceAll("\\s+", "");// remove
+							// whitespace
+							//look for first < or >
+							int counter = 0;
+							boolean notFound = true;
+							String symbol = "EMPTY";
+							while (counter < tempStock.length() && notFound){
+								if(tempStock.charAt(counter) == '<' || tempStock.charAt(counter) == '>'){
+								notFound = false;
+								symbol = tempStock.charAt(counter) + "";
+								}
+								counter++;
+							}
+							
+							//check whether < or > found
+							if(symbol.equals("EMPTY")){
+								JOptionPane
+								.showMessageDialog(
+										null,
+										"Please enter a valid stock",
+										"Warning",
+										JOptionPane.WARNING_MESSAGE);
+						return;
+							}
+							
+							//< or > found now check whether name and value are valid
+							String[] splitStock = tempStock.split(symbol);
+							if (splitStock.length > 2){ // check there was only one > or <
+								JOptionPane
+								.showMessageDialog(
+										null,
+										"Please enter a valid stock",
+										"Warning",
+										JOptionPane.WARNING_MESSAGE);
+						return;
+							}
+							//check stock name
+							if(splitStock[0].length() > 5){
+								JOptionPane
+								.showMessageDialog(
+										null,
+										"Please enter a shorter stock name",
+										"Warning",
+										JOptionPane.WARNING_MESSAGE);
+						return;
+							}
+							for (int i = 0; i < splitStock[0].length(); i++) {
+								if ((!Character.isLetter(splitStock[0]
+										.charAt(i)))
+										&& !(Character.isDigit(splitStock[0].charAt(i)))) {
+									JOptionPane.showMessageDialog(null,
+											"Please enter a valid stock name",
+											"Warning",
+											JOptionPane.WARNING_MESSAGE);
+									return;
+								}
+							}
+							
+							
+							//check stock value
+							if(splitStock[1].length() > 10){
+								JOptionPane.showMessageDialog(null,
+										"Please enter a shorter stock value",
+										"Warning",
+										JOptionPane.WARNING_MESSAGE);
+								return;
+							}
+							
+							try {
+								double tempStockValue = Double.parseDouble(splitStock[1]);
+
+							} catch (NumberFormatException nfe) {
+								JOptionPane.showMessageDialog(null,
+										"Please enter a valid stock price",
+										"Warning", JOptionPane.WARNING_MESSAGE);
+								return;
+							}
+							
+							event.setStock(splitStock[0] + ":" + symbol + ":" + splitStock[1]);
+						}
+						
+						
+						
+						else { // hash input not valid
+							JOptionPane
+									.showMessageDialog(
+											null,
+											"Please enter a valid condition following the hash key",
+											"Warning",
+											JOptionPane.WARNING_MESSAGE);
+							return;
+						}
+						count++;
+					}
+					if (event.getName().equals("EMPTY") || event.getName().equals(" ")) {
+						JOptionPane.showMessageDialog(null,
+								"Please enter a name for the event", "Warning",
+								JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+					if (event.getActiveConditions() == 0) {
+						JOptionPane.showMessageDialog(null,
+								"Please add at least one condition", "Warning",
+								JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+					
+					if(event.getDate() != "EMPTY" && event.getDay() != "EMPTY"){
+					
+					Integer dayInteger = Integer.parseInt(event.getDay());
+					int day = dayInteger.intValue();
+					// first check validity of date if date/day combo has been
+					// selected
+					if (day > 10) {
+						// get date and day values from the spinners
+						String date = event.getDate();
+						String[] splitDate = date.split("/");
+						
+						Calendar cal = new GregorianCalendar();
+						cal.set(Calendar.MONTH, Integer.parseInt(splitDate[0])-1);
+						cal.set(Calendar.YEAR, Integer.parseInt(splitDate[1]));
+						SimpleDateFormat sf = new SimpleDateFormat("ddMMMyyyy");
+						sf.setLenient(false);
+						int monthNumber = cal.get(Calendar.MONTH);
+						String month = getMonth(monthNumber);
+						int year = cal.get(Calendar.YEAR);
+						String formatted = "" + day
+								+ month.charAt(0) + month.charAt(1)
+								+ month.charAt(2) + year;
+						try {
+							// parse formatted string, if incorrect catch
+							// exception
+							sf.parse(formatted);
+
+						} catch (ParseException pe) {
+							JOptionPane.showMessageDialog(null,
+									"Invalid Date & Day combination", "Warning",
+									JOptionPane.WARNING_MESSAGE);
+							return;
+						}
+					}
+					}
+					
+					try {
+						event.sendToDB(); // send the event to the database
+						addEventToRepo(event);
+						if (EventRepository.checkUpcomingEvent(event)) {
+							addToUpcomingEvents(event); // add event to
+																	// the
+																	// upcoming
+					
+							// events
+						}
+						txtNewEvent.setText("Quick event");
+						JOptionPane.showMessageDialog(null,
+								"Added event " + event.toString(), "Information",
+								JOptionPane.INFORMATION_MESSAGE);
+					} catch (SQLException sqle) {
+						JOptionPane.showMessageDialog(null,
+								"Please enter a unique name", "Warning",
+								JOptionPane.WARNING_MESSAGE);
+					}
+
 			}
+		}
 		}
 	}
 	
@@ -322,7 +764,7 @@ public class MainView {
 	 * @author Alexandros Lekkas
 	 * Focus listener class to add focus behaviour to the search textfield
 	 */
-	class MyFocusListener implements FocusListener {
+	class MySearchFocusListener implements FocusListener {
 		@Override
 		public void focusGained(FocusEvent arg0) {
 			if (txtSearch.getText().equals("Search")) {
@@ -332,7 +774,29 @@ public class MainView {
 
 		@Override
 		public void focusLost(FocusEvent arg0) {
-			// txtSearch.setText("Search");
+			if (txtSearch.getText().equals("")) {
+				txtSearch.setText("Search");
+			}
+		}
+	}
+	
+	/**
+	 * @author Alexandros Lekkas
+	 * Focus listener class to add focus behaviour to the new event textfield
+	 */
+	class MyAddFocusListener implements FocusListener {
+		@Override
+		public void focusGained(FocusEvent arg0) {
+			if (txtNewEvent.getText().equals("Quick event")) {
+				txtNewEvent.setText("");
+			}
+		}
+
+		@Override
+		public void focusLost(FocusEvent arg0) {
+			if (txtNewEvent.getText().equals("")) {
+				txtNewEvent.setText("Quick event");
+			}
 		}
 	}
 
@@ -410,7 +874,22 @@ public class MainView {
 			if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
 				if (!txtSearch.getText().equals("Search")
 						&& !txtSearch.getText().equals("")) {
-					search(txtSearch.getText());
+					btnGo.doClick();
+				}
+			}
+		}
+	}
+	
+	/**
+	 * @author Alexandros Lekkas
+	 * Key listener class to add a new event when focused on the new event field and pressing enter
+	 */
+	public class NewEventKeyListener extends KeyAdapter {
+		public void keyPressed(KeyEvent ke) {
+			if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
+				if (!txtNewEvent.getText().equals("Quick event")
+						&& !txtNewEvent.getText().equals("")) {
+					btnNewEvent.doClick();
 				}
 			}
 		}
@@ -537,5 +1016,57 @@ public class MainView {
 	public void addEventToRepo(BrainwavesEvent event){
 		eventRepo.addEvent(event);
 	}
-	//to build mvn clean compile assembly:single to run java -jar jarname.jar
+	
+	/**
+	 * Converts a number to a month String
+	 * 
+	 * @param currentMonth
+	 *            the current month ranging from 0-11
+	 * @return String representing the month
+	 */
+	public String getMonth(int currentMonth) {
+		String month = "";
+		switch (currentMonth) {
+		case 0:
+			month = "January";
+			break;
+		case 1:
+			month = "February";
+			break;
+		case 2:
+			month = "March";
+			break;
+		case 3:
+			month = "April";
+			break;
+		case 4:
+			month = "May";
+			break;
+		case 5:
+			month = "June";
+			break;
+		case 6:
+			month = "July";
+			break;
+		case 7:
+			month = "August";
+			break;
+		case 8:
+			month = "September";
+			break;
+		case 9:
+			month = "October";
+			break;
+		case 10:
+			month = "November";
+			break;
+		case 11:
+			month = "December";
+			break;
+		default:
+			month = "Invalid";
+			break;
+		}
+		return month;
+	}
 }

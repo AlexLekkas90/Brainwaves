@@ -1,7 +1,5 @@
 package gui;
 
-import gui.MainView.MyFocusListener;
-
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -76,8 +74,6 @@ public class NewEventView extends JDialog {
 	private JTextField descField;
 	private JCheckBox boxDesc;
 	private MainView parent;
-	private JCheckBox boxAltEntry;
-	private JTextArea altEntryField;
 	private JTextField stockNameField;
 	private JCheckBox boxStock;
 	private JSpinner stockSymbolSpinner;
@@ -104,7 +100,7 @@ public class NewEventView extends JDialog {
 		setTitle("New Event");
 		this.parent = parent;
 		setResizable(false);
-		setBounds(100, 100, 596, 354);
+		setBounds(100, 100, 340, 354);
 		getContentPane().setLayout(null);
 		contentPanel.setBounds(0, 0, 0, 0);
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -113,7 +109,7 @@ public class NewEventView extends JDialog {
 		Calendar cal = Calendar.getInstance();
 		{
 			JPanel buttonPane = new JPanel();
-			buttonPane.setBounds(284, 282, 296, 33);
+			buttonPane.setBounds(28, 282, 296, 33);
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane);
 			{
@@ -298,80 +294,9 @@ public class NewEventView extends JDialog {
 				}
 			}
 		}
-
-		boxAltEntry = new JCheckBox("Alternate entry:");
-		boxAltEntry.setBounds(284, 14, 105, 20);
-		getContentPane().add(boxAltEntry);
-
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(284, 55, 296, 114);
-		getContentPane().add(scrollPane);
-
-		altEntryField = new JTextArea();
-		altEntryField.setLineWrap(true);
-		altEntryField.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null,
-				null, null, null));
-		scrollPane.setViewportView(altEntryField);
-
-		JLabel lblExampleEntrytime = new JLabel(
-				"Example: #time 11:45 #name MyEvent #temperature >10");
-		lblExampleEntrytime.setBounds(284, 186, 296, 14);
-		getContentPane().add(lblExampleEntrytime);
 	}
 
 
-	/**
-	 * Converts a number to a month String
-	 * 
-	 * @param currentMonth
-	 *            the current month ranging from 0-11
-	 * @return String representing the month
-	 */
-	private String getMonth(int currentMonth) {
-		String month = "";
-		switch (currentMonth) {
-		case 0:
-			month = "January";
-			break;
-		case 1:
-			month = "February";
-			break;
-		case 2:
-			month = "March";
-			break;
-		case 3:
-			month = "April";
-			break;
-		case 4:
-			month = "May";
-			break;
-		case 5:
-			month = "June";
-			break;
-		case 6:
-			month = "July";
-			break;
-		case 7:
-			month = "August";
-			break;
-		case 8:
-			month = "September";
-			break;
-		case 9:
-			month = "October";
-			break;
-		case 10:
-			month = "November";
-			break;
-		case 11:
-			month = "December";
-			break;
-		default:
-			month = "Invalid";
-			break;
-		}
-		return month;
-	}
 
 	/**
 	 * @author Alexandros Lekkas Action listener class for the add event and
@@ -386,406 +311,6 @@ public class NewEventView extends JDialog {
 				setVisible(false);
 				dispose();
 			} else if (action.equals("Add")) {
-				if (boxAltEntry.isSelected()) {
-					BrainwavesEvent event = new BrainwavesEvent();
-					String[] splitRawInputTemp = altEntryField.getText().split(
-							"#");
-					String[] splitRawInput = new String[splitRawInputTemp.length - 1];
-					for (int i = 1; i < splitRawInputTemp.length; i++) {
-						splitRawInput[i - 1] = splitRawInputTemp[i];
-					}
-					int length = splitRawInput.length;
-					int count = 0;
-					while (count < length) {
-						String[] splitInput = new String[] { "", "" };
-						int charCount = 0;
-						while (charCount < splitRawInput[count].length()
-								&& splitRawInput[count].charAt(charCount) != (' ')) {
-							splitInput[0] = splitInput[0]
-									+ splitRawInput[count].charAt(charCount);
-							charCount++;
-						}
-						splitInput[1] = splitRawInput[count]
-								.substring(charCount + 1);// splitInput[0]
-															// contains hash
-															// data type while
-															// [1] contains
-															// actual data
-						splitInput[1] = splitInput[1].trim();
-						if(splitInput[1].equals("")){
-							JOptionPane
-							.showMessageDialog(
-									null,
-									"Please enter a value after a condition",
-									"Warning",
-									JOptionPane.WARNING_MESSAGE);
-							return;
-						}
-						if (splitInput[0].equalsIgnoreCase("name")) { // check
-																		// for
-																		// name
-							if (splitInput[1].length() > 20) {
-								JOptionPane
-										.showMessageDialog(
-												null,
-												"Please enter a name under 20 characters",
-												"Warning",
-												JOptionPane.WARNING_MESSAGE);
-								return;
-							}
-							for (int i = 0; i < splitInput[1].length(); i++) {
-								if ((!Character.isLetter(splitInput[1]
-										.charAt(i)))
-										&& !(splitInput[1].charAt(i) == ' ') && (!Character.isDigit(splitInput[1]
-										.charAt(i)))) {
-									JOptionPane.showMessageDialog(null,
-											"Please enter a valid name",
-											"Warning",
-											JOptionPane.WARNING_MESSAGE);
-									return;
-								}
-							}
-							
-							event.setName(splitInput[1]);
-						} else if (splitInput[0].equalsIgnoreCase("date")) { // check
-																				// for
-																				// date
-							if (splitInput[1].charAt(1) != '/'
-									&& splitInput[1].charAt(2) != '/') {
-								JOptionPane
-										.showMessageDialog(
-												null,
-												"Please enter a date in the format MM/yyyy",
-												"Warning",
-												JOptionPane.WARNING_MESSAGE);
-								return;
-							}
-							String[] splitDate = splitInput[1].split("/");
-							try {
-								int monthNum = Integer.parseInt(splitDate[0]);
-								int yearNum = Integer.parseInt(splitDate[1]);
-								String monthString = monthNum + "";
-								if (monthNum < 10) {
-									monthString = "0" + monthNum;
-								}
-								if (monthNum > 0
-										&& monthNum < 13
-										&& yearNum >= Calendar.getInstance()
-												.get(Calendar.YEAR)
-										&& yearNum < Calendar.getInstance()
-												.get(Calendar.YEAR) + 10) {
-									event.setDate(monthString + "/" + yearNum);
-								} else {
-									JOptionPane.showMessageDialog(null,
-											"Please enter a valid date",
-											"Warning",
-											JOptionPane.WARNING_MESSAGE);
-									return;
-								}
-
-							} catch (NumberFormatException nfe) {
-								JOptionPane.showMessageDialog(null,
-										"Please enter a valid date", "Warning",
-										JOptionPane.WARNING_MESSAGE);
-								return;
-							}
-
-						} else if (splitInput[0].equalsIgnoreCase("day")) { // check
-																			// for
-																			// day
-							try {
-								int dayNum = Integer.parseInt(splitInput[1]);
-								if (dayNum > 0 && dayNum < 32) {
-									String dayString = "" + dayNum;
-									if (dayNum < 10) {
-										dayString = "0" + dayNum;
-									}
-									event.setDay(dayString);
-								} else {
-									JOptionPane.showMessageDialog(null,
-											"Please enter a valid day", "Warning",
-											JOptionPane.WARNING_MESSAGE);
-									return;
-								}
-
-							} catch (NumberFormatException nfe) {
-								JOptionPane.showMessageDialog(null,
-										"Please enter a valid day", "Warning",
-										JOptionPane.WARNING_MESSAGE);
-								return;
-							}
-
-						} else if (splitInput[0].equalsIgnoreCase("time")) { // check
-																				// for
-																				// time
-							if (splitInput[1].charAt(1) != ':'
-									&& splitInput[1].charAt(2) != ':') {
-								JOptionPane
-										.showMessageDialog(
-												null,
-												"Please enter a time in the format hh:mm",
-												"Warning",
-												JOptionPane.WARNING_MESSAGE);
-								return;
-							}
-							String[] timeString = splitInput[1].split(":");
-							try {
-								int hourNum = Integer.parseInt(timeString[0]);
-								int minNum = Integer.parseInt(timeString[1]);
-								if (hourNum > -1 && hourNum < 24 && minNum > -1
-										&& minNum < 60) {
-									event.setTime(hourNum + ":" + minNum);
-								} else {
-									JOptionPane.showMessageDialog(null,
-											"Please enter a valid time",
-											"Warning",
-											JOptionPane.WARNING_MESSAGE);
-									return;
-								}
-
-							} catch (NumberFormatException nfe) {
-								JOptionPane.showMessageDialog(null,
-										"Please enter a valid time", "Warning",
-										JOptionPane.WARNING_MESSAGE);
-								return;
-							}
-
-						} else if (splitInput[0].equalsIgnoreCase("location")) { // check
-																					// for
-																					// location
-							if (splitInput[1].length() > 30) {
-								JOptionPane
-										.showMessageDialog(
-												null,
-												"Please enter a location under 30 characters",
-												"Warning",
-												JOptionPane.WARNING_MESSAGE);
-								return;
-							}
-							for (int i = 0; i < splitInput[1].length(); i++) {
-								if ((!Character.isLetter(splitInput[1]
-										.charAt(i)))
-										&& !(splitInput[1].charAt(i) == ' ')) {
-									JOptionPane.showMessageDialog(null,
-											"Please enter a valid location",
-											"Warning",
-											JOptionPane.WARNING_MESSAGE);
-									return;
-								}
-							}
-							event.setLocation(splitInput[1]);
-
-						} else if (splitInput[0]
-								.equalsIgnoreCase("temperature")) { // check for
-																	// temperature
-							String temp = splitInput[1].replaceAll("\\s+", "");// remove
-																				// whitespace
-							char symbol = temp.charAt(0);
-							String tempString = temp.substring(1);
-							if (symbol != '<' && symbol != '>') {
-								JOptionPane.showMessageDialog(null,
-										"Please enter < or >", "Warning",
-										JOptionPane.WARNING_MESSAGE);
-								return;
-							}
-							try {
-								int tempNum = Integer.parseInt(tempString);
-								if (tempNum >= -30 && tempNum <= 60) {
-									event.setTemperature("" + symbol + ":"
-											+ tempNum);
-								} else {
-									JOptionPane
-											.showMessageDialog(
-													null,
-													"Please enter a valid temperature between -30 and 60 degrees",
-													"Warning",
-													JOptionPane.WARNING_MESSAGE);
-									return;
-								}
-
-							} catch (NumberFormatException nfe) {
-								JOptionPane.showMessageDialog(null,
-										"Please enter a valid temperature",
-										"Warning", JOptionPane.WARNING_MESSAGE);
-								return;
-							}
-
-						} else if (splitInput[0]
-								.equalsIgnoreCase("description")) { // check for
-																	// description
-							if (splitInput[1].length() > 50) {
-								JOptionPane
-										.showMessageDialog(
-												null,
-												"Please enter a description under 50 characters",
-												"Warning",
-												JOptionPane.WARNING_MESSAGE);
-								return;
-							}
-							event.setDescription(splitInput[1]);
-						} else if (splitInput[0].equalsIgnoreCase("stock")){
-							//TODO
-							String tempStock = splitInput[1].replaceAll("\\s+", "");// remove
-							// whitespace
-							//look for first < or >
-							int counter = 0;
-							boolean notFound = true;
-							String symbol = "EMPTY";
-							while (counter < tempStock.length() && notFound){
-								if(tempStock.charAt(counter) == '<' || tempStock.charAt(counter) == '>'){
-								notFound = false;
-								symbol = tempStock.charAt(counter) + "";
-								}
-								counter++;
-							}
-							
-							//check whether < or > found
-							if(symbol.equals("EMPTY")){
-								JOptionPane
-								.showMessageDialog(
-										null,
-										"Please enter a valid stock",
-										"Warning",
-										JOptionPane.WARNING_MESSAGE);
-						return;
-							}
-							
-							//< or > found now check whether name and value are valid
-							String[] splitStock = tempStock.split(symbol);
-							if (splitStock.length > 2){ // check there was only one > or <
-								JOptionPane
-								.showMessageDialog(
-										null,
-										"Please enter a valid stock",
-										"Warning",
-										JOptionPane.WARNING_MESSAGE);
-						return;
-							}
-							//check stock name
-							if(splitStock[0].length() > 5){
-								JOptionPane
-								.showMessageDialog(
-										null,
-										"Please enter a shorter stock name",
-										"Warning",
-										JOptionPane.WARNING_MESSAGE);
-						return;
-							}
-							for (int i = 0; i < splitStock[0].length(); i++) {
-								if ((!Character.isLetter(splitStock[0]
-										.charAt(i)))
-										&& !(Character.isDigit(splitStock[0].charAt(i)))) {
-									JOptionPane.showMessageDialog(null,
-											"Please enter a valid stock name",
-											"Warning",
-											JOptionPane.WARNING_MESSAGE);
-									return;
-								}
-							}
-							
-							
-							//check stock value
-							if(splitStock[1].length() > 10){
-								JOptionPane.showMessageDialog(null,
-										"Please enter a shorter stock value",
-										"Warning",
-										JOptionPane.WARNING_MESSAGE);
-								return;
-							}
-							
-							try {
-								double tempStockValue = Double.parseDouble(splitStock[1]);
-
-							} catch (NumberFormatException nfe) {
-								JOptionPane.showMessageDialog(null,
-										"Please enter a valid stock price",
-										"Warning", JOptionPane.WARNING_MESSAGE);
-								return;
-							}
-							
-							event.setStock(splitStock[0] + ":" + symbol + ":" + splitStock[1]);
-						}
-						
-						
-						
-						else { // hash input not valid
-							JOptionPane
-									.showMessageDialog(
-											null,
-											"Please enter a valid condition following the hash key",
-											"Warning",
-											JOptionPane.WARNING_MESSAGE);
-							return;
-						}
-						count++;
-					}
-					if (event.getName().equals("EMPTY") || event.getName().equals(" ")) {
-						JOptionPane.showMessageDialog(null,
-								"Please enter a name for the event", "Warning",
-								JOptionPane.WARNING_MESSAGE);
-						return;
-					}
-					if (event.getActiveConditions() == 0) {
-						JOptionPane.showMessageDialog(null,
-								"Please add at least one condition", "Warning",
-								JOptionPane.WARNING_MESSAGE);
-						return;
-					}
-					
-					if(event.getDate() != "EMPTY" && event.getDay() != "EMPTY"){
-					
-					Integer dayInteger = Integer.parseInt(event.getDay());
-					int day = dayInteger.intValue();
-					// first check validity of date if date/day combo has been
-					// selected
-					if (day > 10) {
-						// get date and day values from the spinners
-						String date = event.getDate();
-						String[] splitDate = date.split("/");
-						
-						Calendar cal = new GregorianCalendar();
-						cal.set(Calendar.MONTH, Integer.parseInt(splitDate[0])-1);
-						cal.set(Calendar.YEAR, Integer.parseInt(splitDate[1]));
-						SimpleDateFormat sf = new SimpleDateFormat("ddMMMyyyy");
-						sf.setLenient(false);
-						int monthNumber = cal.get(Calendar.MONTH);
-						String month = getMonth(monthNumber);
-						int year = cal.get(Calendar.YEAR);
-						String formatted = "" + day
-								+ month.charAt(0) + month.charAt(1)
-								+ month.charAt(2) + year;
-						try {
-							// parse formatted string, if incorrect catch
-							// exception
-							sf.parse(formatted);
-
-						} catch (ParseException pe) {
-							JOptionPane.showMessageDialog(null,
-									"Invalid Date & Day combination", "Warning",
-									JOptionPane.WARNING_MESSAGE);
-							return;
-						}
-					}
-					}
-					
-					try {
-						event.sendToDB(); // send the event to the database
-						parent.addEventToRepo(event);
-						if (EventRepository.checkUpcomingEvent(event)) {
-							MainView.addToUpcomingEvents(event); // add event to
-																	// the
-																	// upcoming
-																	// events
-						}
-						setVisible(false);
-						dispose();
-					} catch (SQLException sqle) {
-						JOptionPane.showMessageDialog(null,
-								"Please enter a unique name", "Warning",
-								JOptionPane.WARNING_MESSAGE);
-					}
-
-				} else {
 					Integer dayInteger = (Integer) daySpinner.getValue();
 					int day = dayInteger.intValue();
 					// first check validity of date if date/day combo has been
@@ -798,7 +323,7 @@ public class NewEventView extends JDialog {
 						SimpleDateFormat sf = new SimpleDateFormat("ddMMMyyyy");
 						sf.setLenient(false);
 						int monthNumber = cal.get(Calendar.MONTH);
-						String month = getMonth(monthNumber);
+						String month = parent.getMonth(monthNumber);
 						int year = cal.get(Calendar.YEAR);
 						String formatted = "" + daySpinner.getValue()
 								+ month.charAt(0) + month.charAt(1)
@@ -919,7 +444,7 @@ public class NewEventView extends JDialog {
 								"Please select at least one condition",
 								"Warning", JOptionPane.WARNING_MESSAGE);
 					}
-				}
+
 			}
 		}
 	}
