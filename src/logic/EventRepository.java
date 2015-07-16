@@ -3,6 +3,7 @@ package logic;
 import gui.MainView;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Connection;
@@ -11,12 +12,17 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+
+import yahoofinance.Stock;
+import yahoofinance.YahooFinance;
 
 /**
  * @author Alexandros Lekkas
@@ -24,12 +30,14 @@ import org.json.simple.parser.JSONParser;
  */
 public class EventRepository {
 	private ArrayList<BrainwavesEvent> events;
+	private ArrayList<String> stockNames;
 
 	/**
 	 * Create a repository and fetch the events from the DB
 	 */
 	public EventRepository() {
 		events = new ArrayList<BrainwavesEvent>();
+		stockNames = new ArrayList<String>();
 		fetchEventsFromDB();
 	}
 
@@ -38,6 +46,7 @@ public class EventRepository {
 	 */
 	public void fetchEventsFromDB() {
 		events = new ArrayList<BrainwavesEvent>();
+		stockNames = new ArrayList<String>();
 		Connection c = null;
 		Statement stmt = null;
 		try {
@@ -59,6 +68,11 @@ public class EventRepository {
 				
 				events.add(new BrainwavesEvent(name, date, day, time, location,
 						temperature, stock, description));
+				
+				//Add Stock data to repo
+				if(!stock.equals("EMPTY")){
+					stockNames.add(stock.split(":")[0]);
+				}
 			}
 			rs.close();
 			stmt.close();
@@ -73,7 +87,7 @@ public class EventRepository {
 	/**
 	 * TODO
 	 */
-	public boolean checkEvent(BrainwavesEvent currentEvent, String location, double currentTemp) {
+	public boolean checkEvent(BrainwavesEvent currentEvent, String location, double currentTemp, Map<String, Stock> stocks) {
 		// TODO major part checking each event
 		// TODO call static method of MainView to add a text when an event is
 		// true
@@ -228,6 +242,19 @@ public class EventRepository {
 					}
 				}
 		}
+		if(!currentEvent.getStock().equals("EMPTY")){
+			if(stocks.isEmpty()){
+				return false;
+			}
+
+			String stockName = currentEvent.getStock().split(":")[0];
+			String stockSymbol = currentEvent.getStock().split(":")[1];
+			double stockPrice = Double.parseDouble(currentEvent.getStock().split(":")[2]);
+			Stock stock = stocks.get(stockName);
+			//TODO implement checking of stocks
+			
+			
+		}
 
 		if (conditionsLeft == 0) {// all active conditions are true, return true
 									// for event active
@@ -264,6 +291,21 @@ public class EventRepository {
 				 temp = fetchTemperature(loc);
 			}
 		}
+		
+		//get stock data in a map of <String, Stock> where String is the stock name
+		Map<String, Stock> stocks = new HashMap<String, Stock>();
+		stocks.put("EMPTY", new Stock("EMPTY"));
+		String[] stockNamesArray = new String[stockNames.size()];
+		stockNamesArray = stockNames.toArray(stockNamesArray);
+		if(stockNames.size() > 0){
+		try {
+			stocks = YahooFinance.get(stockNamesArray);// single request for all stocks
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} 
+		}
+		
 
 		// TODO delete testing
 		System.out.println("Loc is := "+ loc[1]);
@@ -273,7 +315,7 @@ public class EventRepository {
 		Iterator<BrainwavesEvent> it = events.iterator();
 		while (it.hasNext()) {
 			BrainwavesEvent e = it.next();
-			if (checkEvent(e, loc[1], temp)) {
+			if (checkEvent(e, loc[1], temp, stocks)) {
 				activeEvents.add(e);
 			}
 		}
