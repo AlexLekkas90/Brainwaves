@@ -183,14 +183,19 @@ public class MainView {
 		mntmAdvancedSearch.addActionListener(new MyActionListener());
 		mnEvent.add(mntmAdvancedSearch);
 		
+		//Help menu button
 		JMenu mnHelp = new JMenu("Help");
 		menuBar.add(mnHelp);
 		
 		JMenuItem mntmAbout = new JMenuItem("About");
 		mnHelp.add(mntmAbout);
+		mntmAbout.setActionCommand("About");
+		mntmAbout.addActionListener(new MyActionListener());
 		
-		JMenuItem mntmQuickGuide = new JMenuItem("Quick Guide");
+		JMenuItem mntmQuickGuide = new JMenuItem("Quick guide");
 		mnHelp.add(mntmQuickGuide);
+		mntmQuickGuide.setActionCommand("Quick guide");
+		mntmQuickGuide.addActionListener(new MyActionListener());
 		frmBrainwaves.getContentPane().setLayout(null);
 		
 		// Active events
@@ -319,6 +324,9 @@ public class MainView {
 	 * Action listener class to handle behaviour of buttons
 	 */
 	class MyActionListener implements ActionListener {
+		private String quickGuideMsg;
+		private String aboutMsg;
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String action = e.getActionCommand();
@@ -346,7 +354,27 @@ public class MainView {
 				advancedSearchView.setVisible(true);
 				advancedSearchView.requestFocus();
 				
-			} else if(action.equals("Search")) {
+			}
+			else if (action.equals("About")){
+				aboutMsg = "Author: Alexander Lekkas\nEmail: alexlekkas90@gmail.com"; //TODO make into final and initialise in fields
+				GenericInfoView aboutView = new GenericInfoView(aboutMsg);
+				aboutView.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				aboutView.setVisible(true);
+				aboutView.requestFocus();
+				
+				
+			}else if (action.equals("Quick guide")){
+				quickGuideMsg = "The quick event feature allows event entry entirely via text. Simply append a hashtag # to the start of a condition "
+						+ "followed by the condition data. An example event for 11:45 on the 5th of the month with temperature larger than 10 degrees would be "
+						+ "#name ExampleEvent #time 11:45 #day 5 #temperature>10. Note the order of the conditions does not matter but the name is required.";//TODO add more, fix up
+				GenericInfoView aboutView = new GenericInfoView(quickGuideMsg);
+				aboutView.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				aboutView.setVisible(true);
+				aboutView.requestFocus();
+				
+				
+			}else if(action.equals("Search")) {
+	
 				if (!txtSearch.getText().equals("Search")
 						&& !txtSearch.getText().equals("")) {
 					search(txtSearch.getText());
@@ -916,7 +944,7 @@ public class MainView {
 	/**
 	 * Check which events are upcoming and add them to the list for upcoming events
 	 */
-	public static void addUpcomingEvents() {
+	private static void addUpcomingEvents() {
 		    	ArrayList<BrainwavesEvent> futureEvents;
 				futureEvents = eventRepo.getUpcomingEvents();
 				if (futureEvents.size() > 0){
@@ -925,11 +953,9 @@ public class MainView {
 						addToUpcomingEvents(it.next());
 					}
 				}
-		    	
-
-		
-		
 	}
+	
+
 
 	/**
 	 * Check which events are active when this method is invoked and add them to the list for active events

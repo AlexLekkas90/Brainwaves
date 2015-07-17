@@ -30,15 +30,17 @@ import yahoofinance.YahooFinance;
  */
 public class EventRepository {
 	private ArrayList<BrainwavesEvent> events;
+	private ArrayList<BrainwavesEvent> pastEvents;
 	private ArrayList<String> stockNames;
 
 	/**
-	 * Create a repository and fetch the events from the DB
+	 * Create a repository and fetch the events from the DB, delete past events
 	 */
 	public EventRepository() {
 		events = new ArrayList<BrainwavesEvent>();
 		stockNames = new ArrayList<String>();
 		fetchEventsFromDB();
+		removePastEvents();
 	}
 
 	/**
@@ -46,9 +48,11 @@ public class EventRepository {
 	 */
 	public void fetchEventsFromDB() {
 		events = new ArrayList<BrainwavesEvent>();
+		pastEvents = new ArrayList<BrainwavesEvent>();
 		stockNames = new ArrayList<String>();
 		Connection c = null;
 		Statement stmt = null;
+		BrainwavesEvent event;
 		try {
 			Class.forName("org.sqlite.JDBC");
 			c = DriverManager.getConnection("jdbc:sqlite:BrainwavesDB.db");
@@ -65,14 +69,20 @@ public class EventRepository {
 				temperature = rs.getString("temperature");
 				stock = rs.getString("stock");
 				description = rs.getString("description");
+				event = new BrainwavesEvent(name, date, day, time, location,
+						temperature, stock, description);
 				
-				events.add(new BrainwavesEvent(name, date, day, time, location,
-						temperature, stock, description));
-				
-				//Add Stock data to repo
-				if(!stock.equals("EMPTY")){
-					stockNames.add(stock.split(":")[0]);
+				if(!checkPastEvent(event)){ //check if event active more than 3 days ago
+					events.add(event);
+					//Add Stock data to repo
+					if(!stock.equals("EMPTY")){
+						stockNames.add(stock.split(":")[0]);
+					}
+				} else {
+					pastEvents.add(event);
 				}
+				
+				
 			}
 			rs.close();
 			stmt.close();
@@ -580,6 +590,98 @@ public class EventRepository {
 		}
 		return false;
 	}
+	
+	/** 
+	 * Checks whether a given event takes place more than 3 days prior
+	 * @param e the BrainwavesEvent to be checked
+	 * @return true if the event took place more than 3 days ago
+	 */
+	public static boolean checkPastEvent(BrainwavesEvent e){
+		BrainwavesEvent event = e;
+		Calendar pastCal = Calendar.getInstance();
+		Calendar eventCal = Calendar.getInstance();
+		Calendar currentCal;
+		pastCal.set(Calendar.HOUR_OF_DAY, 0);
+		pastCal.set(Calendar.MINUTE, 0);
+		pastCal.set(Calendar.SECOND, 0);
+		eventCal.set(Calendar.HOUR_OF_DAY, 0);
+		eventCal.set(Calendar.MINUTE, 0);
+		eventCal.set(Calendar.SECOND, 0);
+		int year, month, day,second;
+		year = Calendar.getInstance().get(Calendar.YEAR);
+		month = Calendar.getInstance().get(Calendar.MONTH);
+		day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+		second = Calendar.getInstance().get(Calendar.SECOND);
+		// Date given, no day or time given
+		if (!event.getDate().equals("EMPTY") && event.getDay().equals("EMPTY")
+				&& event.getTime().equals("EMPTY")) {
+			pastCal.set(Calendar.DATE,
+					Calendar.getInstance().get(Calendar.DAY_OF_MONTH) -3);
+			String[] dateString = event.getDate().split("/");
+			eventCal.set(Calendar.MONTH, Integer.parseInt(dateString[0]) - 1);
+			eventCal.set(Calendar.YEAR, Integer.parseInt(dateString[1]));
+			if (eventCal.before(pastCal)) {
+				return true;
+			}
+
+		} // Date and day given
+		else if (!event.getDate().equals("EMPTY")
+				&& !event.getDay().equals("EMPTY")
+				&& event.getTime().equals("EMPTY")) {
+			pastCal.set(Calendar.DATE,
+					Calendar.getInstance().get(Calendar.DAY_OF_MONTH) -3);
+			String[] dateString = event.getDate().split("/");
+			eventCal.set(Calendar.MONTH, Integer.parseInt(dateString[0]) - 1);
+			eventCal.set(Calendar.YEAR, Integer.parseInt(dateString[1]));
+			eventCal.set(Calendar.DAY_OF_MONTH,
+					Integer.parseInt(event.getDay()));
+			if (eventCal.before(pastCal)) {
+				return true;
+			}
+
+		} // Date and time given
+		else if (!event.getDate().equals("EMPTY")
+				&& event.getDay().equals("EMPTY")
+				&& !event.getTime().equals("EMPTY")) {
+			pastCal.set(Calendar.DATE,
+					Calendar.getInstance().get(Calendar.DAY_OF_MONTH) -3);
+			String[] dateString = event.getDate().split("/");
+			eventCal.set(Calendar.MONTH, Integer.parseInt(dateString[0]) - 1);
+			eventCal.set(Calendar.YEAR, Integer.parseInt(dateString[1]));
+			String[] timeString = event.getTime().split(":");
+			String eventTimeConcat = timeString[0] + timeString[1];
+			currentCal = Calendar.getInstance();
+			String currentTimeConcat = currentCal.get(Calendar.HOUR_OF_DAY)
+					+ "" + currentCal.get(Calendar.MINUTE);
+			if (eventCal.before(pastCal) && Integer.parseInt(eventTimeConcat) < Integer
+					.parseInt(currentTimeConcat)) {
+				return true;
+			}
+
+		} // Date day and time given
+		else if (!event.getDate().equals("EMPTY")
+				&& !event.getDay().equals("EMPTY")
+				&& !event.getTime().equals("EMPTY")) {
+			pastCal.set(Calendar.DATE,
+					Calendar.getInstance().get(Calendar.DAY_OF_MONTH) - 3);
+			String[] dateString = event.getDate().split("/");
+			eventCal.set(Calendar.MONTH, Integer.parseInt(dateString[0]) - 1);
+			eventCal.set(Calendar.YEAR, Integer.parseInt(dateString[1]));
+			eventCal.set(Calendar.DAY_OF_MONTH,
+					Integer.parseInt(event.getDay()));
+			String[] timeString = event.getTime().split(":");
+			eventCal.set(Calendar.HOUR_OF_DAY,
+					Integer.parseInt(timeString[0]));
+			eventCal.set(Calendar.MINUTE,
+					Integer.parseInt(timeString[1]));
+			if (eventCal.before(pastCal)) {
+				return true;
+			}
+		}
+		return false;
+		
+		
+	}
 
 	/**
 	 * Returns all events that will take place within the next 7 days
@@ -595,6 +697,22 @@ public class EventRepository {
 			}
 		}
 		return futureEvents;
+	}
+	
+	/**
+	 * Returns all events that were active more than 3 days ago
+	 * @return an ArrayList of old events
+	 */
+	public ArrayList<BrainwavesEvent> getPastEvents() {
+		ArrayList<BrainwavesEvent> pastEvents = new ArrayList<BrainwavesEvent>();
+		Iterator<BrainwavesEvent> it = events.iterator();
+		while (it.hasNext()) {
+			BrainwavesEvent e = it.next();
+			if (checkPastEvent(e)){
+				pastEvents.add(e);
+			}
+		}
+		return pastEvents;
 	}
 
 	/**
@@ -732,6 +850,16 @@ public class EventRepository {
 	public void addEvent(BrainwavesEvent event) {
 		events.add(event);
 		
+	}
+	
+	/**
+	 * Check which events were active more than 3 days ago and permenantly remove them from the database. 
+	 */
+	private void removePastEvents(){
+		Iterator<BrainwavesEvent> it = pastEvents.iterator();
+		while(it.hasNext()){
+			deleteEventFromDB(it.next());
+		}
 	}
 
 }
