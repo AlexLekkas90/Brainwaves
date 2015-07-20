@@ -333,9 +333,14 @@ public class MainView {
 			if (action.equals("Quit")) {
 				System.exit(0);
 			} else if (action.equals("New event")) {
+				
 				NewEventView newEventWindow = new NewEventView(MainView.this);
 				newEventWindow.setVisible(true);
 				newEventWindow.requestFocus();
+//				NewEventView newEventWindow = new NewEventView(MainView.this);
+//				newEventWindow.setVisible(true);
+//				newEventWindow.requestFocus();
+				
 			} else if (action.equals("List events")){
 				if (eventRepo.getRepoSize() > 0) {
 					EventListView allEventsView = new EventListView(

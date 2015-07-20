@@ -86,7 +86,7 @@ public class AdvancedSearchView extends JDialog {
 		setResizable(false);
 		this.repo = repo;
 		setTitle("Advanced Search");
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 358, 300);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
