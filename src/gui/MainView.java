@@ -22,6 +22,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.Timer;
@@ -732,16 +733,46 @@ public class MainView {
 						return;
 					}
 					
-					if(event.getDate() != "EMPTY" && event.getDay() != "EMPTY"){
 					
-					Integer dayInteger = Integer.parseInt(event.getDay());
-					int day = dayInteger.intValue();
+					
+					
+					
+					if(event.getDate() != "EMPTY" && event.getDay() != "EMPTY"){
+						Integer dayInteger = Integer.parseInt(event.getDay());
+						int day = dayInteger.intValue();
+						
+						//check whether date & day combo is not in the past
+							Calendar todayCal = new GregorianCalendar();
+							todayCal = Calendar.getInstance();
+							int thisYear = todayCal.get(Calendar.YEAR);
+							int thisMonth = todayCal.get(Calendar.MONTH); //0-11
+							int thisDay = todayCal.get(Calendar.DAY_OF_MONTH);
+							
+							String date = event.getDate();
+							String[] splitDate = date.split("/");
+							Calendar selectedCal = new GregorianCalendar();
+							selectedCal.set(Calendar.MONTH, Integer.parseInt(splitDate[0])-1);
+							selectedCal.set(Calendar.YEAR, Integer.parseInt(splitDate[1]));
+							selectedCal.set(Calendar.DAY_OF_MONTH,day);
+							int selectedYear = selectedCal.get(Calendar.YEAR);
+							int selectedMonth = selectedCal.get(Calendar.MONTH);
+							int selectedDay = selectedCal.get(Calendar.DAY_OF_MONTH);
+							
+							//TODO del testing
+							System.out.println("thisYear: " + thisYear + " thisMonth: " + thisMonth + " thisDay: " + thisDay + "\nselectedYear: " + selectedYear + " selectedMonth: " + selectedMonth + " selectedDay: " + selectedDay);
+							
+							if(thisYear == selectedYear && thisMonth == selectedMonth && thisDay > selectedDay){
+								JOptionPane.showMessageDialog(null,
+										"Please set a future date and day combination", "Warning",
+										JOptionPane.WARNING_MESSAGE);
+								return;
+							}
+										
+					
 					// first check validity of date if date/day combo has been
 					// selected
 					if (day > 10) {
 						// get date and day values from the spinners
-						String date = event.getDate();
-						String[] splitDate = date.split("/");
 						
 						Calendar cal = new GregorianCalendar();
 						cal.set(Calendar.MONTH, Integer.parseInt(splitDate[0])-1);

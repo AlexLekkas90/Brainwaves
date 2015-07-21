@@ -313,6 +313,33 @@ public class NewEventView extends JDialog {
 			} else if (action.equals("Add")) {
 					Integer dayInteger = (Integer) daySpinner.getValue();
 					int day = dayInteger.intValue();
+					
+					//check whether date & day combo is not in the past
+					if (boxDate.isSelected() && boxDay.isSelected()) {
+						Calendar todayCal = new GregorianCalendar();
+						todayCal = Calendar.getInstance();
+						int thisYear = todayCal.get(Calendar.YEAR);
+						int thisMonth = todayCal.get(Calendar.MONTH); //0-11
+						int thisDay = todayCal.get(Calendar.DAY_OF_MONTH);
+						
+						Date selectedDate = (Date) dateSpinner.getValue();
+						Calendar selectedCal = new GregorianCalendar();
+						selectedCal.setTime(selectedDate);
+						selectedCal.set(Calendar.DAY_OF_MONTH,(Integer)daySpinner.getValue());
+						int selectedYear = selectedCal.get(Calendar.YEAR);
+						int selectedMonth = selectedCal.get(Calendar.MONTH);
+						int selectedDay = selectedCal.get(Calendar.DAY_OF_MONTH);
+						
+					
+						
+						if(thisYear == selectedYear && thisMonth == selectedMonth && thisDay > selectedDay){
+							JOptionPane.showMessageDialog(null,
+									"Please set a future date and day combination", "Warning",
+									JOptionPane.WARNING_MESSAGE);
+							return;
+						}
+						
+					}
 					// first check validity of date if date/day combo has been
 					// selected
 					if (boxDate.isSelected() && boxDay.isSelected() && day > 10) {
