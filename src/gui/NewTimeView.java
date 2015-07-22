@@ -1,22 +1,19 @@
 package gui;
 
 import java.awt.FlowLayout;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.JSpinner.NumberEditor;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JSpinner;
-import javax.swing.JCheckBox;
 
 import logic.BrainwavesEvent;
 
@@ -30,10 +27,7 @@ public class NewTimeView extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
-	private JLabel boxDate;
 	private BrainwavesEvent event;
-	private JSpinner daySpinner;
-	private JLabel boxDay;
 	private JSpinner hourSpinner;
 	private JSpinner minuteSpinner;
 	private JLabel boxTime;
@@ -43,6 +37,7 @@ public class NewTimeView extends JDialog {
 	 * Create the dialog.
 	 */
 	public NewTimeView(BrainwavesEvent event) {
+		this.setModalityType(ModalityType.APPLICATION_MODAL);
 		this.event = event;
 		setTitle("Date");
 		setResizable(false);
@@ -52,7 +47,7 @@ public class NewTimeView extends JDialog {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel);
 		contentPanel.setLayout(null);
-		Calendar cal = Calendar.getInstance();
+		Calendar.getInstance();
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setBounds(6, 90, 205, 33);

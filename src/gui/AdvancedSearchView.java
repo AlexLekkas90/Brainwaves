@@ -3,6 +3,7 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -44,11 +45,8 @@ import logic.EventRepository;
  */
 public class AdvancedSearchView extends JDialog {
 	private final JPanel contentPanel = new JPanel();
-	private JCheckBox boxDate;
 	private JSpinner daySpinner;
 	private JCheckBox boxDay;
-	private SpinnerModel dateModel;
-	private SpinnerModel dayModel;
 	private JCheckBox boxDateRange;
 	private JSpinner dateRangeSpinner;
 	private JSpinner dateRangeSpinner2;
@@ -57,7 +55,6 @@ public class AdvancedSearchView extends JDialog {
 	private JSpinner symbolSpinner;
 	private JSpinner tempSpinner;
 	private JCheckBox boxTemp;
-	private ButtonGroup group;
 	private EventRepository repo;
 	/**
 	 * Launch the application.
@@ -101,7 +98,7 @@ public class AdvancedSearchView extends JDialog {
 		Date latestDate = cal.getTime();
 
 		{
-			SpinnerModel dateModel = new SpinnerDateModel(initDate,
+			new SpinnerDateModel(initDate,
 					earliestDate, latestDate, Calendar.YEAR);
 			SpinnerModel dateModel2 = new SpinnerDateModel(initDate,
 					earliestDate, latestDate, Calendar.YEAR);
@@ -153,7 +150,7 @@ public class AdvancedSearchView extends JDialog {
 			cal.add(Calendar.MONTH, +2);
 			cal.add(Calendar.YEAR, 10);
 			Date latestDate1 = cal.getTime();
-			SpinnerModel dateRangeModel = new SpinnerDateModel(initDate1,
+			new SpinnerDateModel(initDate1,
 					earliestDate1, latestDate1, Calendar.YEAR);
 
 			  

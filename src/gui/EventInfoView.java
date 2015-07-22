@@ -13,6 +13,7 @@ import logic.BrainwavesEvent;
 
 import javax.swing.JScrollPane;
 
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -46,6 +47,7 @@ public class EventInfoView extends JDialog {
 	 * Create the window
 	 */
 	public EventInfoView() {
+		this.setModalityType(ModalityType.APPLICATION_MODAL);
 		setResizable(false);
 		setTitle("Event Information");
 		setBounds(100, 100, 450, 204);

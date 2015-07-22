@@ -1,6 +1,7 @@
 package gui;
 
 
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 
@@ -16,6 +17,7 @@ import logic.EventRepository;
 
 import javax.swing.JLabel;
 
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -26,13 +28,15 @@ public class DeleteConfirmationView extends JDialog {
 	private EventRepository repo;
 	private JList<BrainwavesEvent> resultsList;
 	private DefaultListModel<BrainwavesEvent> resultsModel;
+	private JButton cancelButton;
 
 
 	/**
 	 * Create the dialog.
 	 */
 	public DeleteConfirmationView(BrainwavesEvent event, EventRepository repo, JList<BrainwavesEvent> resultsList,  DefaultListModel<BrainwavesEvent> resultsModel) {
-		setTitle("Warning");
+		this.setModalityType(ModalityType.APPLICATION_MODAL);
+		setTitle("Delete event");
 		setResizable(false);
 		this.event = event;
 		this.repo = repo;
@@ -59,8 +63,9 @@ public class DeleteConfirmationView extends JDialog {
 				getRootPane().setDefaultButton(btnDelete);
 			}
 			{
-				JButton cancelButton = new JButton("Cancel");
+				cancelButton = new JButton("Cancel");
 				cancelButton.setActionCommand("Cancel");
+				cancelButton.addActionListener(new MyActionListener());
 				buttonPane.add(cancelButton);
 			}
 		}
@@ -75,9 +80,9 @@ public class DeleteConfirmationView extends JDialog {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String action = e.getActionCommand();
-			if (action.equals("Cancel")) {
-				setVisible(false);
-				dispose();
+			if (action.equalsIgnoreCase("Cancel")) {
+				DeleteConfirmationView.this.setVisible(false);
+				DeleteConfirmationView.this.dispose();
 			} else if (action.equals("Delete")){
 				int index = resultsList.getSelectedIndex();
 				repo.deleteEvent(event);

@@ -66,7 +66,7 @@ import javax.swing.JButton;
  *         send and receive data from the DB. Modify the search function in the
  *         repository to account for the new task. Change the advanced search class.
  */
-public class MainView {
+public class MainView extends JPanel{
 
 	private JFrame frmBrainwaves;
 	private static EventRepository eventRepo; //holds all the events taken from DB, refreshed according to eventScheduler
@@ -758,9 +758,7 @@ public class MainView {
 							int selectedMonth = selectedCal.get(Calendar.MONTH);
 							int selectedDay = selectedCal.get(Calendar.DAY_OF_MONTH);
 							
-							//TODO del testing
-							System.out.println("thisYear: " + thisYear + " thisMonth: " + thisMonth + " thisDay: " + thisDay + "\nselectedYear: " + selectedYear + " selectedMonth: " + selectedMonth + " selectedDay: " + selectedDay);
-							
+						
 							if(thisYear == selectedYear && thisMonth == selectedMonth && thisDay > selectedDay){
 								JOptionPane.showMessageDialog(null,
 										"Please set a future date and day combination", "Warning",

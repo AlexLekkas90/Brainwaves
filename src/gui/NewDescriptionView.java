@@ -9,45 +9,41 @@ import java.util.Calendar;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.SpinnerModel;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.JSpinner.NumberEditor;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JSpinner;
+import javax.swing.JCheckBox;
 
 import logic.BrainwavesEvent;
-
 import javax.swing.JLabel;
 
 /**
  * @author Alexandros Lekkas Event window that allows the user to add one new
  *         event to the DB
  */
-public class NewDayView extends JDialog {
+public class NewDescriptionView extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
-	private JLabel boxDate;
 	private BrainwavesEvent event;
-	private JSpinner daySpinner;
-	private JLabel boxDay;
+	private JLabel boxDesc;
+	private JTextField descField;
 
 
 	/**
 	 * Create the dialog.
 	 */
-	public NewDayView(BrainwavesEvent event) {
+	public NewDescriptionView(BrainwavesEvent event) {
 		this.setModalityType(ModalityType.APPLICATION_MODAL);
 		this.event = event;
 		setTitle("Date");
 		setResizable(false);
-		setBounds(100, 100, 225, 163);
+		setBounds(100, 100, 242, 163);
 		getContentPane().setLayout(null);
 		contentPanel.setBounds(0, 0, 0, 0);
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel);
 		contentPanel.setLayout(null);
-		Calendar cal = Calendar.getInstance();
+		Calendar.getInstance();
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setBounds(6, 90, 205, 33);
@@ -66,22 +62,14 @@ public class NewDayView extends JDialog {
 				buttonPane.add(cancelButton);
 				cancelButton.addActionListener(new MyActionListener());
 				{
-					// day spinner
-					SpinnerModel dayModel = new SpinnerNumberModel(1, 1, 31, 1);
-					if(!event.getDay().equals("EMPTY")){
-						 dayModel = new SpinnerNumberModel(Integer.parseInt(event.getDay()), 1, 31, 1);
-					}
-					
-					daySpinner = new JSpinner(dayModel);
-					boxDay = new JLabel("Day:");
-					boxDay.setBounds(6, 11, 57, 20);
-					getContentPane().add(boxDay);
-					daySpinner.setBounds(123, 11, 88, 26);
-					NumberEditor ne_daySpinner = new JSpinner.NumberEditor(
-							daySpinner, "00");
-					ne_daySpinner.setToolTipText("");
-					daySpinner.setEditor(ne_daySpinner);
-					getContentPane().add(daySpinner);
+					// Description textfield
+					CustomDocument document3 = new CustomDocument(50);
+					descField = new JTextField(document3, "", 0);
+					boxDesc = new JLabel("Description:");
+					boxDesc.setBounds(6, 11, 97, 20);
+					getContentPane().add(boxDesc);
+					descField.setBounds(117, 11, 111, 26);
+					getContentPane().add(descField);
 
 					
 				}
@@ -105,9 +93,8 @@ public class NewDayView extends JDialog {
 				dispose();
 			} else if (action.equals("Add")) {
 
-				Integer day2 = (Integer) daySpinner.getValue();
-				String dayString = String.format("%02d", day2);
-				event.setDay(dayString);
+				String description = (String) descField.getText();
+				event.setDescription(description);
 
 				setVisible(false);
 				dispose();

@@ -6,14 +6,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SpinnerListModel;
+import javax.swing.SpinnerModel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.JSpinner;
 
 import logic.BrainwavesEvent;
 
@@ -23,24 +30,26 @@ import javax.swing.JLabel;
  * @author Alexandros Lekkas Event window that allows the user to add one new
  *         event to the DB
  */
-public class NewLocationView extends JDialog {
+public class NewStockView extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 	private BrainwavesEvent event;
-	private JTextField locField;
-	private JLabel boxLoc;
+	private JTextField stockNameField;
+	private JFormattedTextField stockValueField;
+	private JLabel boxStock;
+	private JSpinner stockSymbolSpinner;
 
 
 	/**
 	 * Create the dialog.
 	 */
-	public NewLocationView(BrainwavesEvent event) {
+	public NewStockView(BrainwavesEvent event) {
 		this.setModalityType(ModalityType.APPLICATION_MODAL);
 		this.event = event;
 		setTitle("Date");
 		setResizable(false);
-		setBounds(100, 100, 251, 162);
+		setBounds(100, 100, 267, 162);
 		getContentPane().setLayout(null);
 		contentPanel.setBounds(0, 0, 0, 0);
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -49,7 +58,7 @@ public class NewLocationView extends JDialog {
 		Calendar.getInstance();
 		{
 			JPanel buttonPane = new JPanel();
-			buttonPane.setBounds(6, 90, 229, 33);
+			buttonPane.setBounds(6, 90, 245, 33);
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane);
 			{
@@ -66,17 +75,14 @@ public class NewLocationView extends JDialog {
 				cancelButton.addActionListener(new MyActionListener());
 				{
 			
-					CustomDocument document2 = new CustomDocument(30);
-					locField = new JTextField(document2, "", 0);
-					if(!event.getLocation().equals("EMPTY")){
-						locField = new JTextField(document2, event.getLocation(), 0);
-					}
-					
-					locField.addKeyListener(new KeyAdapter() {
+					//Stock data
+					CustomDocument document4 = new CustomDocument(5);
+					stockNameField = new JTextField(document4, "", 0);
+					stockNameField.addKeyListener(new KeyAdapter() {
 						@Override
 						public void keyTyped(KeyEvent key) {
 							char c = key.getKeyChar();
-							if (!(Character.isLetter(c)
+							if (!(Character.isLetter(c) || Character.isDigit(c)
 									|| (c == KeyEvent.VK_BACK_SPACE)
 									|| (c == KeyEvent.VK_DELETE) || (Character
 									.isSpaceChar(c)))) {
@@ -86,11 +92,25 @@ public class NewLocationView extends JDialog {
 
 						}
 					});
-					boxLoc = new JLabel("Location:");
-					boxLoc.setBounds(6, 7, 88, 20);
-					getContentPane().add(boxLoc);
-					locField.setBounds(123, 7, 111, 26);
-					getContentPane().add(locField);
+					CustomDocument document5 = new CustomDocument(10);
+					stockValueField = new JFormattedTextField(NumberFormat.getNumberInstance());
+					stockValueField.setDocument(document5);
+					stockValueField .setValue(new Double(0));
+					
+					stockValueField .setColumns(2);
+					
+					boxStock = new JLabel("Stock:");
+					boxStock.setBounds(6, 11, 88, 20);
+					getContentPane().add(boxStock);
+					stockNameField.setBounds(117, 11, 42, 26);
+					getContentPane().add(stockNameField);
+					stockValueField.setBounds(209, 11, 42, 26);
+					getContentPane().add(stockValueField);
+					SpinnerModel stockSymbolModel = new SpinnerListModel(
+							new ArrayList<String>(Arrays.asList("<", ">")));
+					stockSymbolSpinner = new JSpinner(stockSymbolModel);
+					stockSymbolSpinner.setBounds(163, 11, 42, 26);
+					getContentPane().add(stockSymbolSpinner);
 
 					
 				}
@@ -113,16 +133,18 @@ public class NewLocationView extends JDialog {
 				setVisible(false);
 				dispose();
 			} else if (action.equals("Add")) {
-				String location = (String) locField.getText();
-				if(location.equals("") || location.equals(" ")){
+				if(stockNameField.getText().equals("") ||stockNameField.getText().equals(" ")){
 					JOptionPane.showMessageDialog(null,
-							"Please enter a location",
+							"Please enter a name for the stock",
 							"Warning", JOptionPane.WARNING_MESSAGE);
 					return;
 				}
-				
-				
-				event.setLocation(location);
+
+				String stockName = stockNameField.getText();
+				stockName = stockName.trim();
+				String stockSymbol = (String) stockSymbolSpinner.getValue();
+				String stockValue = stockValueField.getText();
+				event.setStock(stockName + ":" + stockSymbol + ":" + stockValue);
 
 				setVisible(false);
 				dispose();

@@ -97,6 +97,7 @@ public class NewEventView extends JDialog {
 	 * Create the dialog.
 	 */
 	public NewEventView(MainView parent) {
+		this.setModalityType(ModalityType.APPLICATION_MODAL);//makes previous window not focusable
 		setTitle("New Event");
 		this.parent = parent;
 		setResizable(false);
@@ -416,6 +417,14 @@ public class NewEventView extends JDialog {
 					}
 					if (boxLoc.isSelected()) {
 						String location = (String) locField.getText();
+						location = location.trim();
+						if(location.equals("") || location.equals(" ")){
+							JOptionPane.showMessageDialog(null,
+									"Please enter a location",
+									"Warning", JOptionPane.WARNING_MESSAGE);
+							return;
+						}
+							
 						event.setLocation(location);
 						selection = true;
 					}

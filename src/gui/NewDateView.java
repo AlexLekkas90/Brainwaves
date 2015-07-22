@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.FlowLayout;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
@@ -37,6 +38,7 @@ public class NewDateView extends JDialog {
 	 * Create the dialog.
 	 */
 	public NewDateView(BrainwavesEvent event) {
+		this.setModalityType(ModalityType.APPLICATION_MODAL);
 		this.event = event;
 		setTitle("Date");
 		setResizable(false);
