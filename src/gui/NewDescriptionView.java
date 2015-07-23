@@ -17,9 +17,8 @@ import logic.BrainwavesEvent;
 import javax.swing.JLabel;
 
 /**
- * @author Alexandros Lekkas Event window that allows the user to add one new
- *         event to the DB
- */
+ * @author Alexandros Lekkas Description window that allows the user to add a description to the event
+  */
 public class NewDescriptionView extends JDialog {
 
 	private static final long serialVersionUID = 1L;
@@ -80,7 +79,7 @@ public class NewDescriptionView extends JDialog {
 
 
 	/**
-	 * @author Alexandros Lekkas Action listener class for the add event and
+	 * @author Alexandros Lekkas Action listener class for the add and
 	 *         cancel buttons.
 	 */
 	private class MyActionListener implements ActionListener {

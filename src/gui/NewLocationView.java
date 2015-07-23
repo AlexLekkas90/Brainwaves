@@ -20,8 +20,7 @@ import logic.BrainwavesEvent;
 import javax.swing.JLabel;
 
 /**
- * @author Alexandros Lekkas Event window that allows the user to add one new
- *         event to the DB
+ * @author Alexandros Lekkas Location window that allows the user to add a location to the event
  */
 public class NewLocationView extends JDialog {
 
@@ -101,7 +100,7 @@ public class NewLocationView extends JDialog {
 
 
 	/**
-	 * @author Alexandros Lekkas Action listener class for the add event and
+	 * @author Alexandros Lekkas Action listener class for the add and
 	 *         cancel buttons.
 	 */
 	private class MyActionListener implements ActionListener {

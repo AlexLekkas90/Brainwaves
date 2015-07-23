@@ -31,13 +31,17 @@ import logic.EventRepository;
 import javax.swing.JLabel;
 
 
-//TODO add and fix comments to this class and all the 'newxview' classes
+/**
+ * @author Alexandros Lekkas
+ *  Event window that allows the user to add one new
+ *         event to the DB
+ */
 public class NewEventView2 extends JDialog {
 	private JTextField nameField;
 	private DefaultListModel<String> leftListModel;
-	private JList<String> leftList;
+	private JList<String> leftList; // holds conditions that have not been selected
 	private DefaultListModel<String> rightListModel;
-	private JList<String> rightList;
+	private JList<String> rightList; // holds selected conditions
 	BrainwavesEvent event;
 	private MainView parent;
 	private boolean selection = false; // checks whether at least one important
@@ -176,7 +180,7 @@ public class NewEventView2 extends JDialog {
 			if (action.equals("Cancel")) {
 				setVisible(false);
 				dispose();
-			} else if (action.equals("Add")) {
+			} else if (action.equals("Add")) {//add element from left to right list
 
 				int index = 0;
 
@@ -206,7 +210,7 @@ public class NewEventView2 extends JDialog {
 					rightListModel.add(pos, leftListElement);
 				}
 
-			} else if (action.equals("Remove")) {
+			} else if (action.equals("Remove")) {//remove element from right list, add to left list
 				int index = 0;
 
 				index = rightList.getSelectedIndex();
@@ -248,18 +252,18 @@ public class NewEventView2 extends JDialog {
 					leftListModel.add(pos, rightListElement);
 				}
 
-			} else if (action.equals("Clear")) {
+			} else if (action.equals("Clear")) {//clear all elements off right list
 				iniLists();
 				event = new BrainwavesEvent();
 
-			} else if (action.equals("Edit")) {
+			} else if (action.equals("Edit")) {//edit element in right list, used to add data to an event
 				int index = 0;
 
 				index = rightList.getSelectedIndex();
 				if (!(index == -1)) {// if not empty list
 					openWindow(rightList);
 				}
-			} else if (action.equals("Create")) {
+			} else if (action.equals("Create")) {//create the event if all selected right list items have been filled in
 
 				// check whether date & day combo is not in the past
 				if (event.getDate() != "EMPTY" && event.getDay() != "EMPTY") {
@@ -324,7 +328,7 @@ public class NewEventView2 extends JDialog {
 
 				}
 
-				// set event fields according to selected spinners
+				// check whether all elements in right list have been filled in
 				if (event.getDate() != "EMPTY") {
 					selection = true;
 				} else if (dateSide.equals("right")) {
@@ -416,6 +420,11 @@ public class NewEventView2 extends JDialog {
 		}
 	}
 
+	
+	
+	/**
+	 * Initialise left list
+	 */
 	private void iniLists() {
 		rightListModel.clear();
 		leftListModel.clear();
@@ -436,6 +445,11 @@ public class NewEventView2 extends JDialog {
 
 	}
 
+	/**
+	 * 
+	 * @author Alexandros Lekkas
+	 * Adds focus behaviour to textfields
+	 */
 	class MyFocusListener implements FocusListener {
 		@Override
 		public void focusGained(FocusEvent arg0) {
@@ -452,6 +466,11 @@ public class NewEventView2 extends JDialog {
 		}
 	}
 
+	/**
+	 * 
+	 * @author Alexandros Lekkas
+	 *	Main clicking behaviour for left and right lists
+	 */
 	class MyMouseListener implements MouseListener {
 		@Override
 		public void mouseClicked(MouseEvent e) {
@@ -512,6 +531,11 @@ public class NewEventView2 extends JDialog {
 		}
 	}
 
+	/**
+	 * 
+	 * @author Alexandros Lekkas
+	 *	Key behaviour for left list
+	 */
 	public class LeftListKeyListener extends KeyAdapter {
 		private JList<String> list = null;
 
@@ -550,6 +574,11 @@ public class NewEventView2 extends JDialog {
 		}
 	}
 
+	/**
+	 * 
+	 * @author Alexandros Lekkas
+	 * Key behaviour for right list
+	 */
 	public class RightListKeyListener extends KeyAdapter {
 		private JList<String> list = null;
 
@@ -567,6 +596,10 @@ public class NewEventView2 extends JDialog {
 		}
 	}
 
+	/**
+	 * Opens a window when activating a right list element in order to fill in the condition data
+	 * @param rightList the list of selected conditions
+	 */
 	private void openWindow(JList<String> rightList) {
 		String rightListElement = rightList.getSelectedValue();
 		if (rightListElement.equals("Date")) {
