@@ -63,7 +63,7 @@ public class NewEventView2 extends JDialog {
 		this.parent = parent;
 		this.setModalityType(ModalityType.APPLICATION_MODAL);
 		setTitle("New Event");
-		setBounds(100, 100, 520, 452);
+		setBounds(100, 100, 501, 445);
 		getContentPane().setLayout(null);
 		event = new BrainwavesEvent();
 
@@ -91,6 +91,8 @@ public class NewEventView2 extends JDialog {
 
 		// Left List
 		JScrollPane leftListPane = new JScrollPane();
+		leftListPane.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null,
+				null, null));
 		leftListPane.setBounds(10, 84, 191, 250);
 		getContentPane().add(leftListPane);
 
@@ -102,7 +104,9 @@ public class NewEventView2 extends JDialog {
 
 		// Right List
 		JScrollPane rightListPane = new JScrollPane();
-		rightListPane.setBounds(311, 84, 191, 250);
+		rightListPane.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null,
+				null, null, null));
+		rightListPane.setBounds(293, 84, 191, 250);
 		getContentPane().add(rightListPane);
 
 		rightListModel = new DefaultListModel<String>();
@@ -113,7 +117,7 @@ public class NewEventView2 extends JDialog {
 
 		{
 			JPanel buttonPane = new JPanel();
-			buttonPane.setBounds(10, 373, 494, 40);
+			buttonPane.setBounds(10, 373, 475, 33);
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane);
 
@@ -133,25 +137,25 @@ public class NewEventView2 extends JDialog {
 				// Buttons
 				JButton btnAdd = new JButton("Add");
 				btnAdd.setActionCommand("Add");
-				btnAdd.setBounds(211, 84, 90, 23);
+				btnAdd.setBounds(211, 84, 72, 23);
 				getContentPane().add(btnAdd);
 				btnAdd.addActionListener(new MyActionListener());
 
 				JButton btnRemove = new JButton("Remove");
 				btnRemove.setActionCommand("Remove");
-				btnRemove.setBounds(211, 117, 90, 23);
+				btnRemove.setBounds(211, 117, 72, 23);
 				getContentPane().add(btnRemove);
 				btnRemove.addActionListener(new MyActionListener());
 
 				JButton btnClear = new JButton("Clear");
 				btnClear.setActionCommand("Clear");
-				btnClear.setBounds(211, 311, 90, 23);
+				btnClear.setBounds(211, 311, 72, 23);
 				getContentPane().add(btnClear);
 				btnClear.addActionListener(new MyActionListener());
 
 				JButton btnEdit = new JButton("Edit");
 				btnEdit.setActionCommand("Edit");
-				btnEdit.setBounds(211, 151, 90, 23);
+				btnEdit.setBounds(211, 151, 72, 23);
 				getContentPane().add(btnEdit);
 
 				JLabel lblAvailableConditions = new JLabel(

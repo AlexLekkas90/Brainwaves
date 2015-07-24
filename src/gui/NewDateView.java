@@ -41,7 +41,7 @@ public class NewDateView extends JDialog {
 		this.event = event;
 		setTitle("Date");
 		setResizable(false);
-		setBounds(100, 100, 253, 163);
+		setBounds(100, 100, 225, 163);
 		getContentPane().setLayout(null);
 		contentPanel.setBounds(0, 0, 0, 0);
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -50,7 +50,7 @@ public class NewDateView extends JDialog {
 		Calendar cal = Calendar.getInstance();
 		{
 			JPanel buttonPane = new JPanel();
-			buttonPane.setBounds(6, 88, 235, 41);
+			buttonPane.setBounds(6, 90, 205, 33);
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane);
 			{
@@ -87,9 +87,9 @@ public class NewDateView extends JDialog {
 							earliestDate, latestDate, Calendar.YEAR);
 					dateSpinner = new JSpinner(dateModel);
 					boxDate = new JLabel("Date:");
-					boxDate.setBounds(6, 17, 57, 20);
+					boxDate.setBounds(6, 11, 57, 20);
 					getContentPane().add(boxDate);
-					dateSpinner.setBounds(127, 11, 114, 33);
+					dateSpinner.setBounds(123, 11, 88, 26);
 					dateSpinner.setEditor(new JSpinner.DateEditor(dateSpinner,
 							"MM/yyyy"));
 					getContentPane().add(dateSpinner);

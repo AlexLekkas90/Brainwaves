@@ -39,7 +39,7 @@ public class NewLocationView extends JDialog {
 		this.event = event;
 		setTitle("Date");
 		setResizable(false);
-		setBounds(100, 100, 256, 162);
+		setBounds(100, 100, 251, 162);
 		getContentPane().setLayout(null);
 		contentPanel.setBounds(0, 0, 0, 0);
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -48,7 +48,7 @@ public class NewLocationView extends JDialog {
 		Calendar.getInstance();
 		{
 			JPanel buttonPane = new JPanel();
-			buttonPane.setBounds(6, 90, 235, 41);
+			buttonPane.setBounds(6, 90, 229, 33);
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane);
 			{
@@ -86,9 +86,9 @@ public class NewLocationView extends JDialog {
 						}
 					});
 					boxLoc = new JLabel("Location:");
-					boxLoc.setBounds(10, 10, 88, 20);
+					boxLoc.setBounds(6, 7, 88, 20);
 					getContentPane().add(boxLoc);
-					locField.setBounds(130, 7, 111, 26);
+					locField.setBounds(123, 7, 111, 26);
 					getContentPane().add(locField);
 
 					
