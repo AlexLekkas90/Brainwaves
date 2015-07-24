@@ -83,7 +83,7 @@ public class AdvancedSearchView extends JDialog {
 		setResizable(false);
 		this.repo = repo;
 		setTitle("Advanced Search");
-		setBounds(100, 100, 358, 300);
+		setBounds(100, 100, 423, 342);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -112,9 +112,6 @@ public class AdvancedSearchView extends JDialog {
 			Date latestDate2 = cal.getTime();
 			SpinnerModel dateModel3 = new SpinnerDateModel(initDate2,
 					earliestDate2, latestDate2, Calendar.YEAR);
-			JPanel buttonPane = new JPanel();
-			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
 			// date spinner
 //			boxDate = new JCheckBox("Date:");
@@ -132,15 +129,15 @@ public class AdvancedSearchView extends JDialog {
 			// date range spinner
 			boxDateRange = new JCheckBox("Date range:");
 			contentPanel.add(boxDateRange);
-			boxDateRange.setBounds(6, 13, 105, 23);
+			boxDateRange.setBounds(6, 17, 105, 23);
 			dateRangeSpinner = new JSpinner(dateModel2);
 			contentPanel.add(dateRangeSpinner);
-			dateRangeSpinner.setBounds(132, 11, 88, 26);
+			dateRangeSpinner.setBounds(132, 11, 114, 33);
 			dateRangeSpinner.setEditor(new JSpinner.DateEditor(
 					dateRangeSpinner, "MM/yyyy"));
 			dateRangeSpinner2 = new JSpinner(dateModel3);
 			contentPanel.add(dateRangeSpinner2);
-			dateRangeSpinner2.setBounds(249, 11, 88, 26);
+			dateRangeSpinner2.setBounds(280, 11, 114, 33);
 			dateRangeSpinner2.setEditor(new JSpinner.DateEditor(
 					dateRangeSpinner2, "MM/yyyy"));
 			cal.add(Calendar.MONTH, +1);
@@ -159,17 +156,17 @@ public class AdvancedSearchView extends JDialog {
 			SpinnerModel dayModel = new SpinnerNumberModel(1, 1, 31, 1);
 			boxDay = new JCheckBox("Day:");
 			contentPanel.add(boxDay);
-			boxDay.setBounds(6, 50, 57, 23);
+			boxDay.setBounds(6, 55, 57, 23);
 			daySpinner = new JSpinner(dayModel);
 			contentPanel.add(daySpinner);
-			daySpinner.setBounds(132, 48, 88, 26);
+			daySpinner.setBounds(132, 50, 88, 33);
 			NumberEditor ne_daySpinner = new JSpinner.NumberEditor(daySpinner,
 					"00");
 			ne_daySpinner.setToolTipText("");
 			daySpinner.setEditor(ne_daySpinner);
 			boxLoc = new JCheckBox("Location:");
 			contentPanel.add(boxLoc);
-			boxLoc.setBounds(6, 87, 88, 23);
+			boxLoc.setBounds(6, 90, 88, 23);
 
 			// location textfield
 			CustomDocument document2 = new CustomDocument(30);
@@ -189,7 +186,7 @@ public class AdvancedSearchView extends JDialog {
 
 				}
 			});
-			locField.setBounds(132, 85, 88, 26);
+			locField.setBounds(139, 90, 88, 26);
 			
 			
 			// temperature spinner
@@ -199,20 +196,20 @@ public class AdvancedSearchView extends JDialog {
 					1);
 			symbolSpinner = new JSpinner(symbolModel);
 			contentPanel.add(symbolSpinner);
-			symbolSpinner.setBounds(132, 122, 42, 26);
+			symbolSpinner.setBounds(132, 121, 57, 33);
 			tempSpinner = new JSpinner(tempModel);
 			contentPanel.add(tempSpinner);
-			tempSpinner.setBounds(178, 122, 42, 26);
+			tempSpinner.setBounds(193, 121, 76, 33);
 			NumberEditor ne_tempSpinner = new JSpinner.NumberEditor(
 					tempSpinner, "#");
 			ne_tempSpinner.setToolTipText("");
 			tempSpinner.setEditor(ne_tempSpinner);
 			boxTemp = new JCheckBox("Temperature:");
 			contentPanel.add(boxTemp);
-			boxTemp.setBounds(6, 124, 105, 23);
+			boxTemp.setBounds(6, 123, 105, 23);
 			
 			JLabel lblTo = new JLabel("to");
-			lblTo.setBounds(230, 11, 25, 26);
+			lblTo.setBounds(258, 11, 25, 33);
 			contentPanel.add(lblTo);
 //			group = new ButtonGroup();
 //		    group.add(boxDate);
@@ -245,20 +242,24 @@ public class AdvancedSearchView extends JDialog {
 			stockValueField .setColumns(2);
 			
 			boxStockName = new JCheckBox("Stock Name:");
-			boxStockName.setBounds(6, 161, 88, 20);
+			boxStockName.setBounds(6, 160, 105, 20);
 			contentPanel.add(boxStockName);
 			boxStockValue = new JCheckBox("Stock Value:");
-			boxStockValue.setBounds(6, 198, 88, 20);
+			boxStockValue.setBounds(6, 197, 105, 20);
 			contentPanel.add(boxStockValue);
-			stockNameField.setBounds(132, 161, 42, 26);
+			stockNameField.setBounds(139, 160, 42, 26);
 			contentPanel.add(stockNameField);
-			stockValueField.setBounds(178, 198, 42, 26);
+			stockValueField.setBounds(200, 194, 88, 26);
 			contentPanel.add(stockValueField);
 			SpinnerModel stockSymbolModel = new SpinnerListModel(
 					new ArrayList<String>(Arrays.asList("<", ">")));
 			stockSymbolSpinner = new JSpinner(stockSymbolModel);
-			stockSymbolSpinner.setBounds(132, 198, 42, 26);
+			stockSymbolSpinner.setBounds(132, 190, 57, 33);
 			contentPanel.add(stockSymbolSpinner);
+			JPanel buttonPane = new JPanel();
+			buttonPane.setBounds(6, 261, 401, 40);
+			contentPanel.add(buttonPane);
+			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			
 			// button menu
 			{

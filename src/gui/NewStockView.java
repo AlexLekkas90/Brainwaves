@@ -48,7 +48,7 @@ public class NewStockView extends JDialog {
 		this.event = event;
 		setTitle("Date");
 		setResizable(false);
-		setBounds(100, 100, 267, 162);
+		setBounds(100, 100, 298, 162);
 		getContentPane().setLayout(null);
 		contentPanel.setBounds(0, 0, 0, 0);
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -57,7 +57,7 @@ public class NewStockView extends JDialog {
 		Calendar.getInstance();
 		{
 			JPanel buttonPane = new JPanel();
-			buttonPane.setBounds(6, 90, 245, 33);
+			buttonPane.setBounds(6, 90, 280, 41);
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane);
 			{
@@ -99,16 +99,16 @@ public class NewStockView extends JDialog {
 					stockValueField .setColumns(2);
 					
 					boxStock = new JLabel("Stock:");
-					boxStock.setBounds(6, 11, 88, 20);
+					boxStock.setBounds(17, 14, 88, 20);
 					getContentPane().add(boxStock);
-					stockNameField.setBounds(117, 11, 42, 26);
+					stockNameField.setBounds(117, 14, 42, 26);
 					getContentPane().add(stockNameField);
-					stockValueField.setBounds(209, 11, 42, 26);
+					stockValueField.setBounds(244, 14, 42, 26);
 					getContentPane().add(stockValueField);
 					SpinnerModel stockSymbolModel = new SpinnerListModel(
 							new ArrayList<String>(Arrays.asList("<", ">")));
 					stockSymbolSpinner = new JSpinner(stockSymbolModel);
-					stockSymbolSpinner.setBounds(163, 11, 42, 26);
+					stockSymbolSpinner.setBounds(175, 11, 57, 33);
 					getContentPane().add(stockSymbolSpinner);
 
 					

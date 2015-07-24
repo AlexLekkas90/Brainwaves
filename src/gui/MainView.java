@@ -51,6 +51,9 @@ import javax.swing.border.BevelBorder;
 import javax.swing.JPanel;
 import javax.swing.JList;
 import javax.swing.JButton;
+import javax.swing.border.LineBorder;
+import java.awt.Color;
+import javax.swing.border.EtchedBorder;
 
 /**
  * 
@@ -87,21 +90,32 @@ public class MainView extends JPanel{
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		//default OS look and feel
+//		try {
+//			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//		} catch (ClassNotFoundException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		} catch (InstantiationException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		} catch (IllegalAccessException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		} catch (UnsupportedLookAndFeelException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+		
+		//sea glass look and feel
 		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (InstantiationException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IllegalAccessException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (UnsupportedLookAndFeelException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		    UIManager.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
+		} catch (Exception e) {
+		    e.printStackTrace();
 		}
+		
+		
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -202,8 +216,6 @@ public class MainView extends JPanel{
 		// Active events
 		activeEventsModel = new DefaultListModel<BrainwavesEvent>();
 		JScrollPane activeEvents = new JScrollPane();
-		activeEvents.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null,
-				null, null, null));
 		activeEvents.setBounds(310, 181, 290, 138);
 		frmBrainwaves.getContentPane().add(activeEvents);
 
@@ -218,8 +230,6 @@ public class MainView extends JPanel{
 		
 		// Upcoming events
 		JScrollPane upcomingEvents = new JScrollPane();
-		upcomingEvents.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null,
-				null, null, null));
 		upcomingEvents.setBounds(10, 181, 290, 138);
 		frmBrainwaves.getContentPane().add(upcomingEvents);
 
@@ -258,7 +268,7 @@ public class MainView extends JPanel{
 		// search
 		txtSearch = new JTextField();
 		txtSearch.setText("Search");
-		txtSearch.setBounds(438, 11, 96, 27);
+		txtSearch.setBounds(415, 11, 119, 27);
 
 		txtSearch.addFocusListener(new MySearchFocusListener());
 		frmBrainwaves.getContentPane().add(txtSearch);
@@ -274,7 +284,7 @@ public class MainView extends JPanel{
 		//new event alt
 		txtNewEvent = new JTextField();
 		txtNewEvent.setText("Quick event");
-		txtNewEvent.setBounds(396, 49, 138, 27);
+		txtNewEvent.setBounds(358, 49, 176, 27);
 
 		txtNewEvent.addFocusListener(new MyAddFocusListener());
 		frmBrainwaves.getContentPane().add(txtNewEvent);
@@ -286,7 +296,7 @@ public class MainView extends JPanel{
 		btnNewEvent.addActionListener(new MyActionListener());
 		frmBrainwaves.getContentPane().add(btnNewEvent);
 		JLabel exampleLbl = new JLabel("Example: #time 11:45 #name MyEvent ");
-		exampleLbl.setBounds(396, 87, 204, 14);
+		exampleLbl.setBounds(358, 87, 242, 14);
 		frmBrainwaves.getContentPane().add(exampleLbl);
 				
 	}
@@ -335,7 +345,7 @@ public class MainView extends JPanel{
 				System.exit(0);
 			} else if (action.equals("New event")) {
 				
-				NewEventView newEventWindow = new NewEventView(MainView.this);
+				NewEventView2 newEventWindow = new NewEventView2(MainView.this);
 				newEventWindow.setVisible(true);
 				newEventWindow.requestFocus();
 //				NewEventView newEventWindow = new NewEventView(MainView.this);

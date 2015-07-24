@@ -40,7 +40,7 @@ public class NewTimeView extends JDialog {
 		this.event = event;
 		setTitle("Date");
 		setResizable(false);
-		setBounds(100, 100, 225, 163);
+		setBounds(100, 100, 262, 163);
 		getContentPane().setLayout(null);
 		contentPanel.setBounds(0, 0, 0, 0);
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -49,7 +49,7 @@ public class NewTimeView extends JDialog {
 		Calendar.getInstance();
 		{
 			JPanel buttonPane = new JPanel();
-			buttonPane.setBounds(6, 90, 205, 33);
+			buttonPane.setBounds(6, 90, 241, 41);
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane);
 			{
@@ -78,10 +78,10 @@ public class NewTimeView extends JDialog {
 					hourSpinner = new JSpinner(hourModel);
 					minuteSpinner = new JSpinner(minuteModel);
 					boxTime = new JLabel("Time:");
-					boxTime.setBounds(6, 11, 57, 20);
+					boxTime.setBounds(10, 17, 57, 20);
 					getContentPane().add(boxTime);
-					hourSpinner.setBounds(123, 11, 42, 26);
-					minuteSpinner.setBounds(169, 11, 42, 26);
+					hourSpinner.setBounds(107, 11, 64, 33);
+					minuteSpinner.setBounds(183, 11, 64, 33);
 					NumberEditor ne_hourSpinner = new JSpinner.NumberEditor(
 							hourSpinner, "#");
 					ne_hourSpinner.setToolTipText("");

@@ -43,7 +43,7 @@ public class NewTemperatureView extends JDialog {
 		this.event = event;
 		setTitle("Date");
 		setResizable(false);
-		setBounds(100, 100, 251, 162);
+		setBounds(100, 100, 272, 162);
 		getContentPane().setLayout(null);
 		contentPanel.setBounds(0, 0, 0, 0);
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -52,7 +52,7 @@ public class NewTemperatureView extends JDialog {
 		Calendar.getInstance();
 		{
 			JPanel buttonPane = new JPanel();
-			buttonPane.setBounds(6, 90, 229, 33);
+			buttonPane.setBounds(10, 88, 246, 41);
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane);
 			{
@@ -77,10 +77,10 @@ public class NewTemperatureView extends JDialog {
 					symbolSpinner = new JSpinner(symbolModel);
 					tempSpinner = new JSpinner(tempModel);
 					boxTemp = new JLabel("Temperature:");
-					boxTemp.setBounds(6, 11, 111, 20);
+					boxTemp.setBounds(11, 17, 111, 20);
 					getContentPane().add(boxTemp);
-					symbolSpinner.setBounds(123, 11, 42, 26);
-					tempSpinner.setBounds(169, 11, 42, 26);
+					symbolSpinner.setBounds(118, 11, 64, 33);
+					tempSpinner.setBounds(192, 11, 64, 33);
 					getContentPane().add(symbolSpinner);
 					NumberEditor ne_tempSpinner = new JSpinner.NumberEditor(
 							tempSpinner, "#");

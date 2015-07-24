@@ -55,9 +55,9 @@ public class EventListView extends JDialog {
 	public EventListView(ArrayList<BrainwavesEvent> events, EventRepository repo) {
 		setResizable(false);
 		this.repo = repo;
-		setTitle("Events Listing");
+		setTitle("Events listing");
 		this.events = events;
-		setBounds(100, 100, 390, 247);
+		setBounds(100, 100, 390, 260);
 		getContentPane().setLayout(new BorderLayout());
 		{
 			JScrollPane upcomingEvents = new JScrollPane();
@@ -91,8 +91,6 @@ public class EventListView extends JDialog {
 		// Results list
 		JScrollPane searchResults = new JScrollPane();
 		contentPanel.add(searchResults);
-		searchResults.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null,
-				null, null, null));
 		searchResults.setBounds(10, 31, 364, 144);
 		resultsList = new JList<BrainwavesEvent>(resultsModel);
 		resultsList.addMouseListener(new MyMouseListener());

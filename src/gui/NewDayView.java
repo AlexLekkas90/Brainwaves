@@ -40,7 +40,7 @@ public class NewDayView extends JDialog {
 		this.event = event;
 		setTitle("Date");
 		setResizable(false);
-		setBounds(100, 100, 225, 163);
+		setBounds(100, 100, 256, 163);
 		getContentPane().setLayout(null);
 		contentPanel.setBounds(0, 0, 0, 0);
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -49,7 +49,7 @@ public class NewDayView extends JDialog {
 		Calendar cal = Calendar.getInstance();
 		{
 			JPanel buttonPane = new JPanel();
-			buttonPane.setBounds(6, 90, 205, 33);
+			buttonPane.setBounds(6, 90, 234, 41);
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane);
 			{
@@ -73,9 +73,9 @@ public class NewDayView extends JDialog {
 					
 					daySpinner = new JSpinner(dayModel);
 					boxDay = new JLabel("Day:");
-					boxDay.setBounds(6, 11, 57, 20);
+					boxDay.setBounds(10, 17, 57, 20);
 					getContentPane().add(boxDay);
-					daySpinner.setBounds(123, 11, 88, 26);
+					daySpinner.setBounds(126, 11, 114, 33);
 					NumberEditor ne_daySpinner = new JSpinner.NumberEditor(
 							daySpinner, "00");
 					ne_daySpinner.setToolTipText("");

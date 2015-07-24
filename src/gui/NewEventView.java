@@ -24,6 +24,7 @@ import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerListModel;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.MaskFormatter;
 import javax.swing.JTextField;
@@ -82,16 +83,22 @@ public class NewEventView extends JDialog {
 	/**
 	 * Launch the application.
 	 */
-	// public static void main(String[] args) {
-	// try {
-	// NewEventView dialog = new NewEventView();
-	// dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-	// dialog.setVisible(true);
-	// dialog.requestFocus();
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// }
+//	 public static void main(String[] args) {
+//			try {
+//			    UIManager.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
+//			} catch (Exception e) {
+//			    e.printStackTrace();
+//			}
+//			
+//	 try {
+//	 NewEventView dialog = new NewEventView(new MainView());
+//	 dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+//	 dialog.setVisible(true);
+//	 dialog.requestFocus();
+//	 } catch (Exception e) {
+//	 e.printStackTrace();
+//	 }
+//	 }
 
 	/**
 	 * Create the dialog.
@@ -101,7 +108,7 @@ public class NewEventView extends JDialog {
 		setTitle("New Event");
 		this.parent = parent;
 		setResizable(false);
-		setBounds(100, 100, 340, 354);
+		setBounds(100, 100, 341, 430);
 		getContentPane().setLayout(null);
 		contentPanel.setBounds(0, 0, 0, 0);
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -110,7 +117,7 @@ public class NewEventView extends JDialog {
 		Calendar cal = Calendar.getInstance();
 		{
 			JPanel buttonPane = new JPanel();
-			buttonPane.setBounds(28, 282, 296, 33);
+			buttonPane.setBounds(10, 351, 313, 38);
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane);
 			{
@@ -138,9 +145,9 @@ public class NewEventView extends JDialog {
 							earliestDate, latestDate, Calendar.YEAR);
 					dateSpinner = new JSpinner(dateModel);
 					boxDate = new JCheckBox("Date:");
-					boxDate.setBounds(10, 59, 57, 20);
+					boxDate.setBounds(10, 66, 57, 20);
 					getContentPane().add(boxDate);
-					dateSpinner.setBounds(127, 59, 88, 26);
+					dateSpinner.setBounds(127, 59, 114, 33);
 					dateSpinner.setEditor(new JSpinner.DateEditor(dateSpinner,
 							"MM/yyyy"));
 					getContentPane().add(dateSpinner);
@@ -149,9 +156,9 @@ public class NewEventView extends JDialog {
 					SpinnerModel dayModel = new SpinnerNumberModel(1, 1, 31, 1);
 					daySpinner = new JSpinner(dayModel);
 					boxDay = new JCheckBox("Day:");
-					boxDay.setBounds(10, 90, 57, 20);
+					boxDay.setBounds(10, 108, 57, 20);
 					getContentPane().add(boxDay);
-					daySpinner.setBounds(127, 90, 88, 26);
+					daySpinner.setBounds(127, 101, 114, 33);
 					NumberEditor ne_daySpinner = new JSpinner.NumberEditor(
 							daySpinner, "00");
 					ne_daySpinner.setToolTipText("");
@@ -165,10 +172,10 @@ public class NewEventView extends JDialog {
 					hourSpinner = new JSpinner(hourModel);
 					minuteSpinner = new JSpinner(minuteModel);
 					boxTime = new JCheckBox("Time:");
-					boxTime.setBounds(10, 121, 57, 20);
+					boxTime.setBounds(10, 154, 57, 20);
 					getContentPane().add(boxTime);
-					hourSpinner.setBounds(127, 121, 42, 26);
-					minuteSpinner.setBounds(173, 121, 42, 26);
+					hourSpinner.setBounds(127, 147, 64, 33);
+					minuteSpinner.setBounds(207, 147, 64, 33);
 					NumberEditor ne_hourSpinner = new JSpinner.NumberEditor(
 							hourSpinner, "#");
 					ne_hourSpinner.setToolTipText("");
@@ -198,9 +205,9 @@ public class NewEventView extends JDialog {
 						}
 					});
 					boxLoc = new JCheckBox("Location:");
-					boxLoc.setBounds(10, 152, 88, 20);
+					boxLoc.setBounds(10, 187, 88, 20);
 					getContentPane().add(boxLoc);
-					locField.setBounds(127, 152, 111, 26);
+					locField.setBounds(134, 187, 111, 26);
 					getContentPane().add(locField);
 
 					// temperature spinner
@@ -211,10 +218,10 @@ public class NewEventView extends JDialog {
 					symbolSpinner = new JSpinner(symbolModel);
 					tempSpinner = new JSpinner(tempModel);
 					boxTemp = new JCheckBox("Temperature:");
-					boxTemp.setBounds(10, 183, 111, 20);
+					boxTemp.setBounds(10, 227, 111, 20);
 					getContentPane().add(boxTemp);
-					symbolSpinner.setBounds(127, 183, 42, 26);
-					tempSpinner.setBounds(173, 183, 42, 26);
+					symbolSpinner.setBounds(127, 220, 64, 33);
+					tempSpinner.setBounds(207, 220, 64, 33);
 					getContentPane().add(symbolSpinner);
 					NumberEditor ne_tempSpinner = new JSpinner.NumberEditor(
 							tempSpinner, "#");
@@ -249,9 +256,9 @@ public class NewEventView extends JDialog {
 					CustomDocument document3 = new CustomDocument(50);
 					descField = new JTextField(document3, "", 0);
 					boxDesc = new JCheckBox("Description:");
-					boxDesc.setBounds(10, 245, 97, 20);
+					boxDesc.setBounds(10, 303, 97, 20);
 					getContentPane().add(boxDesc);
-					descField.setBounds(127, 245, 111, 26);
+					descField.setBounds(134, 300, 111, 26);
 					getContentPane().add(descField);
 					
 					
@@ -280,16 +287,16 @@ public class NewEventView extends JDialog {
 					stockValueField .setColumns(2);
 					
 					boxStock = new JCheckBox("Stock:");
-					boxStock.setBounds(10, 214, 88, 20);
+					boxStock.setBounds(10, 266, 88, 20);
 					getContentPane().add(boxStock);
-					stockNameField.setBounds(127, 214, 42, 26);
+					stockNameField.setBounds(134, 263, 42, 26);
 					getContentPane().add(stockNameField);
-					stockValueField.setBounds(219, 214, 42, 26);
+					stockValueField.setBounds(249, 263, 42, 26);
 					getContentPane().add(stockValueField);
 					SpinnerModel stockSymbolModel = new SpinnerListModel(
 							new ArrayList<String>(Arrays.asList("<", ">")));
 					stockSymbolSpinner = new JSpinner(stockSymbolModel);
-					stockSymbolSpinner.setBounds(173, 214, 42, 26);
+					stockSymbolSpinner.setBounds(177, 259, 64, 33);
 					getContentPane().add(stockSymbolSpinner);
 	
 				}

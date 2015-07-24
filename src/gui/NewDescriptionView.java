@@ -36,7 +36,7 @@ public class NewDescriptionView extends JDialog {
 		this.event = event;
 		setTitle("Date");
 		setResizable(false);
-		setBounds(100, 100, 242, 163);
+		setBounds(100, 100, 262, 163);
 		getContentPane().setLayout(null);
 		contentPanel.setBounds(0, 0, 0, 0);
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -45,7 +45,7 @@ public class NewDescriptionView extends JDialog {
 		Calendar.getInstance();
 		{
 			JPanel buttonPane = new JPanel();
-			buttonPane.setBounds(6, 90, 205, 33);
+			buttonPane.setBounds(6, 90, 240, 41);
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane);
 			{
@@ -65,9 +65,9 @@ public class NewDescriptionView extends JDialog {
 					CustomDocument document3 = new CustomDocument(50);
 					descField = new JTextField(document3, "", 0);
 					boxDesc = new JLabel("Description:");
-					boxDesc.setBounds(6, 11, 97, 20);
+					boxDesc.setBounds(10, 14, 97, 20);
 					getContentPane().add(boxDesc);
-					descField.setBounds(117, 11, 111, 26);
+					descField.setBounds(117, 11, 129, 26);
 					getContentPane().add(descField);
 
 					
