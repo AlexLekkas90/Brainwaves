@@ -335,7 +335,7 @@ public class MainView extends JPanel{
 				System.exit(0);
 			} else if (action.equals("New event")) {
 				
-				NewEventView newEventWindow = new NewEventView(MainView.this);
+				NewEventView2 newEventWindow = new NewEventView2(MainView.this);
 				newEventWindow.setVisible(true);
 				newEventWindow.requestFocus();
 //				NewEventView newEventWindow = new NewEventView(MainView.this);
@@ -370,13 +370,9 @@ public class MainView extends JPanel{
 				
 				
 			}else if (action.equals("Quick guide")){
-				quickGuideMsg = "The quick event feature allows event entry entirely via text. Simply append a hashtag # to the start of a condition "
-						+ "followed by the condition data. An example event for 11:45 on the 5th of the month with temperature larger than 10 degrees would be "
-						+ "#name ExampleEvent #time 11:45 #day 5 #temperature>10. Note the order of the conditions does not matter but the name is required.";//TODO add more, fix up
-				GenericInfoView aboutView = new GenericInfoView(quickGuideMsg);
-				aboutView.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-				aboutView.setVisible(true);
-				aboutView.requestFocus();
+				QuickGuideView dialog = new QuickGuideView();
+				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				dialog.setVisible(true);
 				
 				
 			}else if(action.equals("Search")) {

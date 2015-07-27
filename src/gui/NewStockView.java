@@ -98,8 +98,8 @@ public class NewStockView extends JDialog {
 					
 					stockValueField .setColumns(2);
 					
-					boxStock = new JLabel("Stock:");
-					boxStock.setBounds(6, 11, 88, 20);
+					boxStock = new JLabel("Stock (Name/Price):");
+					boxStock.setBounds(6, 11, 101, 20);
 					getContentPane().add(boxStock);
 					stockNameField.setBounds(117, 11, 42, 26);
 					getContentPane().add(stockNameField);

@@ -37,6 +37,7 @@ public class GenericInfoView extends JDialog {
 	 */
 	public GenericInfoView(String message) {
 		setResizable(false);
+		setTitle("Info Panel");
 		setBounds(100, 100, 528, 245);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -52,6 +53,7 @@ public class GenericInfoView extends JDialog {
 				{
 					aboutInfo = new JTextArea();
 					aboutInfo.setLineWrap(true);
+					aboutInfo.setWrapStyleWord(true);
 					aboutInfo.setEditable(false);
 					aboutInfo
 					.setBackground(UIManager.getColor("Button.background"));

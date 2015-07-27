@@ -76,7 +76,7 @@ public class NewTemperatureView extends JDialog {
 							1);
 					symbolSpinner = new JSpinner(symbolModel);
 					tempSpinner = new JSpinner(tempModel);
-					boxTemp = new JLabel("Temperature:");
+					boxTemp = new JLabel("Temperature (\u00B0C):");
 					boxTemp.setBounds(6, 11, 111, 20);
 					getContentPane().add(boxTemp);
 					symbolSpinner.setBounds(123, 11, 42, 26);

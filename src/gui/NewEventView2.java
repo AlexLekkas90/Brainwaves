@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.FlowLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -22,12 +23,16 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.SoftBevelBorder;
 
 import logic.BrainwavesEvent;
 import logic.EventRepository;
+
 import javax.swing.JLabel;
 
 
@@ -63,7 +68,7 @@ public class NewEventView2 extends JDialog {
 		this.parent = parent;
 		this.setModalityType(ModalityType.APPLICATION_MODAL);
 		setTitle("New Event");
-		setBounds(100, 100, 501, 445);
+		setBounds(100, 100, 499, 372);
 		getContentPane().setLayout(null);
 		event = new BrainwavesEvent();
 
@@ -93,7 +98,7 @@ public class NewEventView2 extends JDialog {
 		JScrollPane leftListPane = new JScrollPane();
 		leftListPane.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null,
 				null, null));
-		leftListPane.setBounds(10, 84, 191, 250);
+		leftListPane.setBounds(10, 84, 191, 172);
 		getContentPane().add(leftListPane);
 
 		leftListModel = new DefaultListModel<String>();
@@ -106,7 +111,7 @@ public class NewEventView2 extends JDialog {
 		JScrollPane rightListPane = new JScrollPane();
 		rightListPane.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null,
 				null, null, null));
-		rightListPane.setBounds(293, 84, 191, 250);
+		rightListPane.setBounds(293, 84, 191, 172);
 		getContentPane().add(rightListPane);
 
 		rightListModel = new DefaultListModel<String>();
@@ -117,7 +122,7 @@ public class NewEventView2 extends JDialog {
 
 		{
 			JPanel buttonPane = new JPanel();
-			buttonPane.setBounds(10, 373, 475, 33);
+			buttonPane.setBounds(10, 300, 474, 33);
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane);
 
@@ -149,7 +154,7 @@ public class NewEventView2 extends JDialog {
 
 				JButton btnClear = new JButton("Clear");
 				btnClear.setActionCommand("Clear");
-				btnClear.setBounds(211, 311, 72, 23);
+				btnClear.setBounds(211, 233, 72, 23);
 				getContentPane().add(btnClear);
 				btnClear.addActionListener(new MyActionListener());
 
@@ -162,6 +167,10 @@ public class NewEventView2 extends JDialog {
 						"Available conditions");
 				lblAvailableConditions.setBounds(10, 59, 122, 14);
 				getContentPane().add(lblAvailableConditions);
+				
+				JLabel lblSelectedConditions = new JLabel("Selected conditions");
+				lblSelectedConditions.setBounds(293, 59, 122, 14);
+				getContentPane().add(lblSelectedConditions);
 				btnEdit.addActionListener(new MyActionListener());
 
 			}

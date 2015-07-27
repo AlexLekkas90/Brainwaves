@@ -85,7 +85,7 @@ public class NewLocationView extends JDialog {
 
 						}
 					});
-					boxLoc = new JLabel("Location:");
+					boxLoc = new JLabel("Location (City):");
 					boxLoc.setBounds(6, 7, 88, 20);
 					getContentPane().add(boxLoc);
 					locField.setBounds(123, 7, 111, 26);
@@ -112,7 +112,7 @@ public class NewLocationView extends JDialog {
 				setVisible(false);
 				dispose();
 			} else if (action.equals("Add")) {
-				String location = (String) locField.getText();
+				String location = (String) locField.getText().trim();
 				if(location.equals("") || location.equals(" ")){
 					JOptionPane.showMessageDialog(null,
 							"Please enter a location",

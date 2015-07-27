@@ -87,7 +87,7 @@ public class NewDateView extends JDialog {
 							earliestDate, latestDate, Calendar.YEAR);
 					dateSpinner = new JSpinner(dateModel);
 					boxDate = new JLabel("Date:");
-					boxDate.setBounds(6, 11, 57, 20);
+					boxDate.setBounds(6, 11, 94, 20);
 					getContentPane().add(boxDate);
 					dateSpinner.setBounds(123, 11, 88, 26);
 					dateSpinner.setEditor(new JSpinner.DateEditor(dateSpinner,

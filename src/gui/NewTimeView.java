@@ -77,7 +77,7 @@ public class NewTimeView extends JDialog {
 					
 					hourSpinner = new JSpinner(hourModel);
 					minuteSpinner = new JSpinner(minuteModel);
-					boxTime = new JLabel("Time:");
+					boxTime = new JLabel("Time (24h):");
 					boxTime.setBounds(6, 11, 57, 20);
 					getContentPane().add(boxTime);
 					hourSpinner.setBounds(123, 11, 42, 26);
