@@ -34,30 +34,44 @@ public class InfoPanelScheduler extends TimerTask {
 		ipPair = IPFetcher.fetchIP();
 		String ip = "N/A"; // ip chosen
 		
+		System.out.println("REACHED STAGE 2.1");
 
 		if(!ipPair[0].equals("N/A")){ // select pair
 			ip = ipPair[0];
 		} else if(!ipPair[1].equals("N/A")){
 			ip = ipPair[1];
 		}
+		System.out.println("REACHED STAGE 2.2");
 		
 		String[] loc = {"N/A", "N/A"};// country/city pair
 		double temp = -1000;
 		if(!ip.equals("N/A")){ // if IP service unnavailable do not attempt to look up location or temperature
 			loc = fetchLocation(ip);
 			if(!loc[1].equals("N/A")){// if loc service unnavailable do not attempt to look up temperature
+				try{
 				 temp = fetchTemperature(loc);
+				}catch(NullPointerException npe){
+					npe.printStackTrace();
+				}
 			}
 		}
+		
+		System.out.println("REACHED STAGE 2.3");
 		// TODO delete testing
 		System.out.println("Loc is := "+ loc[1]);
-		
-		lblLoc.setText("Location: " + loc[1]);
+		if(loc[1].equals("N/A") || loc[1].equals(null) || loc[1].length() <= 1){
+			lblLoc.setText("Location: N/A");
+			} else {
+				System.out.println("setting loc");
+				lblLoc.setText("Location: " + loc[1]);
+			}
+		System.out.println("REACHED STAGE 2.4");
 		if(temp == -1000){
 		lblTemp.setText("Temperature: N/A");
 		} else {
 			lblTemp.setText("Temperature: " + temp + " °C");
 		}
+		System.out.println("REACHED STAGE 2.5");
 	}
 	
 //	private String[] fetchLocation(String ip){

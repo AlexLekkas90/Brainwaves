@@ -103,7 +103,9 @@ public class MainView extends JPanel{
 					MainView window = new MainView();
 					window.frmBrainwaves.setVisible(true);
 					window.frmBrainwaves.requestFocus();
-					eventRepo = new EventRepository(); // to hold the events
+					eventRepo = new EventRepository("BrainwavesDB.db");// to hold the events
+					eventRepo.fetchEventsFromDB();
+					eventRepo.removePastEvents();
 					addUpcomingEvents(); // adds any upcoming events to the list
 					Timer time = new Timer();
 					EventScheduler eventScheduler = new EventScheduler(// checks active events every specified time period
@@ -330,7 +332,7 @@ public class MainView extends JPanel{
 				System.exit(0);
 			} else if (action.equals("New event")) {
 				
-				NewEventView2 newEventWindow = new NewEventView2(MainView.this);
+				NewEventView2 newEventWindow = new NewEventView2(MainView.this, eventRepo);
 				newEventWindow.setVisible(true);
 				newEventWindow.requestFocus();
 //				NewEventView newEventWindow = new NewEventView(MainView.this);
@@ -789,7 +791,7 @@ public class MainView extends JPanel{
 					}
 					
 					try {
-						event.sendToDB(); // send the event to the database
+						eventRepo.sendToDB(event); // send the event to the database
 						addEventToRepo(event);
 						if (EventRepository.checkUpcomingEvent(event)) {
 							addToUpcomingEvents(event); // add event to

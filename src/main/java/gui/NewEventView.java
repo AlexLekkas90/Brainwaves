@@ -78,7 +78,7 @@ public class NewEventView extends JDialog {
 	private JCheckBox boxStock;
 	private JSpinner stockSymbolSpinner;
 	private JFormattedTextField stockValueField;
-
+	private EventRepository eventRepo;
 	/**
 	 * Launch the application.
 	 */
@@ -96,10 +96,11 @@ public class NewEventView extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public NewEventView(MainView parent) {
+	public NewEventView(MainView parent, EventRepository repo) {
 		this.setModalityType(ModalityType.APPLICATION_MODAL);//makes previous window not focusable
 		setTitle("New Event");
 		this.parent = parent;
+		eventRepo = repo;
 		setResizable(false);
 		setBounds(100, 100, 340, 354);
 		getContentPane().setLayout(null);
@@ -456,7 +457,7 @@ public class NewEventView extends JDialog {
 						
 							try {
 								event.setName(name);
-								event.sendToDB(); // send the event to the
+								eventRepo.sendToDB(event); // send the event to the
 													// database
 								parent.addEventToRepo(event);
 								if (EventRepository.checkUpcomingEvent(event)) {

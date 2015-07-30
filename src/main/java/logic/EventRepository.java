@@ -2,11 +2,14 @@ package main.java.logic;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,6 +30,7 @@ import yahoofinance.YahooFinance;
  * Repository class that holds the events and contains various methods to gain information on the events.
  */
 public class EventRepository {
+	private String databaseName;
 	private ArrayList<BrainwavesEvent> events;
 	private ArrayList<BrainwavesEvent> pastEvents;
 	private ArrayList<String> stockNames;
@@ -34,11 +38,12 @@ public class EventRepository {
 	/**
 	 * Create a repository and fetch the events from the DB, delete past events
 	 */
-	public EventRepository() {
+	public EventRepository(String databaseName) {
 		events = new ArrayList<BrainwavesEvent>();
 		stockNames = new ArrayList<String>();
-		fetchEventsFromDB();
-		removePastEvents();
+		this.databaseName = databaseName;
+//		fetchEventsFromDB();
+//		removePastEvents();
 	}
 
 	/**
@@ -53,7 +58,7 @@ public class EventRepository {
 		BrainwavesEvent event;
 		try {
 			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection("jdbc:sqlite:BrainwavesDB.db");
+			c = DriverManager.getConnection("jdbc:sqlite:" + databaseName);
 			c.setAutoCommit(false);
 			stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM Events;");
@@ -299,23 +304,37 @@ public class EventRepository {
 		ipPair = IPFetcher.fetchIP();
 		String ip = "N/A"; // ip chosen
 		
-
+		System.out.println("REACHED STAGE 1.1");
 		if(!ipPair[0].equals("N/A")){ // select pair
 			ip = ipPair[0];
 		} else if(!ipPair[1].equals("N/A")){
 			ip = ipPair[1];
 		}
+		System.out.println("REACHED STAGE 1.2");
+		
 		// TODO delete testing
 				System.out.println("IP of my system is := "+ ip);
 		
 		String[] loc = {"N/A", "N/A"};// country/city pair
 		double temp = -1000;
-		if(!ip.equals("N/A")){ // if IP service unnavailable do not attempt to look up location or temperature
-			loc = fetchLocation(ip);
-			if(!loc[1].equals("N/A")){// if loc service unnavailable do not attempt to look up temperature
-				 temp = fetchTemperature(loc);
+		if (!ip.equals("N/A")) { // if IP service unnavailable do not attempt to
+									// look up location or temperature
+			try {
+				loc = fetchLocation(ip);
+			} catch (ConnectException ce) {
+				ce.printStackTrace();
+				System.out.println("Connect exception");
+			}
+			if(!loc[1].equals("N/A") && !loc[1].equals(null) || loc[1].length() <= 1){// if loc service unnavailable do not attempt to look up temperature
+				try{
+					 temp = fetchTemperature(loc);
+					}catch(NullPointerException npe){
+						npe.printStackTrace();
+					}
 			}
 		}
+		
+		System.out.println("REACHED STAGE 1.3");
 		
 		//get stock data in a map of <String, Stock> where String is the stock name
 		Map<String, Stock> stocks = new HashMap<String, Stock>();
@@ -333,7 +352,7 @@ public class EventRepository {
 		
 
 		// TODO delete testing
-		System.out.println("Loc is := "+ loc[1]);
+		System.out.println("Loc is := "+ loc[0] + "|" + loc[1]);
 		
 		
 		ArrayList<BrainwavesEvent> activeEvents = new ArrayList<BrainwavesEvent>();
@@ -366,7 +385,7 @@ public class EventRepository {
 //	}
 	
 	//fetchlocation alternate code with exception handling attempting a second location service
-	private String[] fetchLocation(String ip){
+	private String[] fetchLocation(String ip) throws ConnectException {
 		JSONParser jsonParser = new JSONParser();
 		JSONObject json;
 		String city = "N/A"; //unrealistic loc value
@@ -827,7 +846,7 @@ public class EventRepository {
 		    Statement stmt = null;
 		    try {
 		    	Class.forName("org.sqlite.JDBC");
-				c = DriverManager.getConnection("jdbc:sqlite:BrainwavesDB.db");
+				c = DriverManager.getConnection("jdbc:sqlite:" + databaseName);
 				c.setAutoCommit(false);
 				stmt = c.createStatement();
 		      String sql = "DELETE from EVENTS where NAME='" + event.getName() + "';";
@@ -853,10 +872,46 @@ public class EventRepository {
 	/**
 	 * Check which events were active more than 3 days ago and permenantly remove them from the database. 
 	 */
-	private void removePastEvents(){
+	public void removePastEvents(){
 		Iterator<BrainwavesEvent> it = pastEvents.iterator();
 		while(it.hasNext()){
 			deleteEventFromDB(it.next());
+		}
+	}
+	
+	/**
+	 * This method sends the data contained in this event to the database,
+	 * assume the databse has been created upon starting the program
+	 * @param event the event to be send to the database
+	 * @throws SQLException 
+	 */
+	public void sendToDB(BrainwavesEvent event) throws SQLException {
+		Connection c = null;
+		PreparedStatement stmt = null;
+		try {
+			Class.forName("org.sqlite.JDBC");
+			c = DriverManager.getConnection("jdbc:sqlite:" + databaseName);
+			c.setAutoCommit(false);
+			stmt = c.prepareStatement("INSERT INTO EVENTS (NAME,DATE,DAY,TIME,LOCATION,TEMPERATURE,STOCK,DESCRIPTION) "
+					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+			stmt.setString(1, event.getName());
+			stmt.setString(2, event.getDate());
+			stmt.setString(3, event.getDay());
+			stmt.setString(4, event.getTime());
+			stmt.setString(5, event.getLocation());
+			stmt.setString(6, event.getTemperature());
+			stmt.setString(7, event.getStock());
+			stmt.setString(8, event.getDescription());
+			
+			stmt.executeUpdate();
+			stmt.close();
+			c.commit();
+			c.close();
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			c.close();
+//			System.exit(0);
+			throw new SQLException();
 		}
 	}
 

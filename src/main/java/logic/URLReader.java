@@ -19,13 +19,18 @@ public class URLReader {
 	 * @return the url contents as a String
 	 * @throws Exception
 	 */
-	public static String read(String urlStr) throws Exception {
-			URL website = new URL(urlStr);
-	        URLConnection con = website.openConnection();
+	public static String read(String urlStr) {
+		StringBuilder response = new StringBuilder();
+		URLConnection con;
+		
+		URL website;
+		try{
+			 website = new URL(urlStr);
+	         con = website.openConnection();
 	        BufferedReader input = new BufferedReader(
 	                                new InputStreamReader(
 	                                    con.getInputStream()));
-	        StringBuilder response = new StringBuilder();
+	        
 	        String inputLine;
 	        inputLine = input.readLine();
 	        while (inputLine != null){ 
@@ -33,6 +38,9 @@ public class URLReader {
 	            inputLine = input.readLine();
 	        }
 	        input.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		} 
 
 	        return response.toString();
 	}

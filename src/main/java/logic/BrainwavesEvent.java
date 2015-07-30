@@ -21,7 +21,6 @@ public class BrainwavesEvent {
 	private String description;
 	private int activeConditions;
 	private static int totalConditions = 6;
-	private String DATABASENAME = "jdbc:sqlite:BrainwavesDB.db";
 
 	/**
 	 * Constructor for an empty event
@@ -221,41 +220,41 @@ public class BrainwavesEvent {
 	public String toString() {
 		return this.name;
 	}
-
-	/**
-	 * This method sends the data contained in this event to the database,
-	 * assume the databse has been created upon starting the program
-	 * @throws SQLException 
-	 */
-	public void sendToDB() throws SQLException {
-		Connection c = null;
-		PreparedStatement stmt = null;
-		try {
-			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection(DATABASENAME);
-			c.setAutoCommit(false);
-			stmt = c.prepareStatement("INSERT INTO EVENTS (NAME,DATE,DAY,TIME,LOCATION,TEMPERATURE,STOCK,DESCRIPTION) "
-					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-			stmt.setString(1, getName());
-			stmt.setString(2, getDate());
-			stmt.setString(3, getDay());
-			stmt.setString(4, getTime());
-			stmt.setString(5, getLocation());
-			stmt.setString(6, getTemperature());
-			stmt.setString(7, getStock());
-			stmt.setString(8, getDescription());
-			
-			stmt.executeUpdate();
-			stmt.close();
-			c.commit();
-			c.close();
-		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			c.close();
-//			System.exit(0);
-			throw new SQLException();
-		}
-	}
+//
+//	/** TODO del
+//	 * This method sends the data contained in this event to the database,
+//	 * assume the databse has been created upon starting the program
+//	 * @throws SQLException 
+//	 */
+//	public void sendToDB() throws SQLException {
+//		Connection c = null;
+//		PreparedStatement stmt = null;
+//		try {
+//			Class.forName("org.sqlite.JDBC");
+//			c = DriverManager.getConnection(DATABASENAME);
+//			c.setAutoCommit(false);
+//			stmt = c.prepareStatement("INSERT INTO EVENTS (NAME,DATE,DAY,TIME,LOCATION,TEMPERATURE,STOCK,DESCRIPTION) "
+//					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+//			stmt.setString(1, getName());
+//			stmt.setString(2, getDate());
+//			stmt.setString(3, getDay());
+//			stmt.setString(4, getTime());
+//			stmt.setString(5, getLocation());
+//			stmt.setString(6, getTemperature());
+//			stmt.setString(7, getStock());
+//			stmt.setString(8, getDescription());
+//			
+//			stmt.executeUpdate();
+//			stmt.close();
+//			c.commit();
+//			c.close();
+//		} catch (Exception e) {
+//			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+//			c.close();
+////			System.exit(0);
+//			throw new SQLException();
+//		}
+//	}
 
 	/**
 	 * @return the number of active conditions (non EMPTY)
@@ -329,12 +328,5 @@ public class BrainwavesEvent {
 		return output;
 	}
 	
-	/**
-	 * WARNING: TEST METHOD used for testing classes that use a separate DB
-	 * @param name
-	 */
-	public void setDBName(String name){
-		DATABASENAME = name;
-	}
 
 }

@@ -125,18 +125,18 @@ public class BrainwavesEventTest {
 		assertEquals("Number of active conditions is 1", 1, e.getActiveConditions());
 	}
 	
-	@Test
-	public  void sentToDBShouldSendEventCorrectly(){
-		BrainwavesEvent e = new BrainwavesEvent("TEST1","EMPTY","EMPTY","EMPTY","EMPTY","EMPTY","EMPTY","EMPTY");
-		try {
-			e.setDBName("jdbc:sqlite:testDB.db");
-			e.sendToDB();
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-	}
+//	@Test
+//	public  void sentToDBShouldSendEventCorrectly(){
+//		BrainwavesEvent e = new BrainwavesEvent("TEST1","EMPTY","EMPTY","EMPTY","EMPTY","EMPTY","EMPTY","EMPTY");
+//		try {
+//			e.setDBName("jdbc:sqlite:testDB.db");
+//			e.sendToDB();
+//		} catch (SQLException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//		
+//	}
 
 
 }

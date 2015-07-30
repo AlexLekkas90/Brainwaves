@@ -58,13 +58,15 @@ public class NewEventView2 extends JDialog {
 	private String locationSide;
 	private String stockSide;
 	private String descriptionSide;
+	private EventRepository eventRepo;
 
 	/**
 	 * Create the dialog.
 	 */
-	public NewEventView2(MainView parent) {
+	public NewEventView2(MainView parent, EventRepository repo) {
 		setResizable(false);
 		this.parent = parent;
+		eventRepo = repo;
 		this.setModalityType(ModalityType.APPLICATION_MODAL);
 		setTitle("New Event");
 		setBounds(100, 100, 499, 372);
@@ -181,6 +183,8 @@ public class NewEventView2 extends JDialog {
 	}
 
 	private class MyActionListener implements ActionListener {
+
+		
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -399,7 +403,7 @@ public class NewEventView2 extends JDialog {
 
 						try {
 							event.setName(name);
-							event.sendToDB(); // send the event to the
+							eventRepo.sendToDB(event); // send the event to the
 												// database
 							parent.addEventToRepo(event);
 							if (EventRepository.checkUpcomingEvent(event)) {
