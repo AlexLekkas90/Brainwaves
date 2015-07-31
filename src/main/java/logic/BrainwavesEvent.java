@@ -66,6 +66,7 @@ public class BrainwavesEvent {
 	 * Calculates how many active conditions this event has
 	 */
 	private void updateActiveConditions() {
+		activeConditions = 0;
 		if (!date.equals("EMPTY")) {
 			activeConditions++;
 		}
@@ -146,6 +147,7 @@ public class BrainwavesEvent {
 	 */
 	public void setStock(String stock){
 		this.stock = stock;
+		updateActiveConditions();
 	}
 
 	/**

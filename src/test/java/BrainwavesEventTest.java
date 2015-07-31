@@ -121,8 +121,10 @@ public class BrainwavesEventTest {
 		assertEquals("Number of active conditions is 0", 0, e.getActiveConditions());
 		e.setLocation("Newcastle");
 		assertEquals("Number of active conditions is 1", 1, e.getActiveConditions());
-		e.setLocation("EMPTY");
+		e.setLocation("Sunderland");
 		assertEquals("Number of active conditions is 1", 1, e.getActiveConditions());
+		e.setLocation("EMPTY");
+		assertEquals("Number of active conditions is 0", 0, e.getActiveConditions());
 	}
 	
 //	@Test
