@@ -230,7 +230,7 @@ public class EventRepository {
 			}
 		}
 		if (!currentEvent.getLocation().equals("EMPTY")) {
-			if(location.equals("N/A")){
+			if(location == null || "N/A".equals(location)){
 				return false; //there has been an error in reading the location
 			}
 			String eventLoc = currentEvent.getLocation();
@@ -264,9 +264,6 @@ public class EventRepository {
 			String stockSymbol = currentEvent.getStock().split(":")[1];
 			double eventStockPrice = Double.parseDouble(currentEvent.getStock().split(":")[2]);
 			Stock stock = stocks.get(stockName);
-			//TODO del testing
-			System.out.println(stock.getQuote().getPrice());
-			System.out.println(stock.getQuote().toString());
 			//TODO implement checking of stocks
 			if(stock.getQuote().getAsk().doubleValue() == 0 && stock.getQuote().getBid().doubleValue() == 0 && stock.getQuote().getPrice().doubleValue() == 0
 					 && stock.getQuote().getPreviousClose().doubleValue() == 0){ // 4 stock values at 0 most likely invalid stock
@@ -317,7 +314,7 @@ public class EventRepository {
 		
 		String[] loc = {"N/A", "N/A"};// country/city pair
 		double temp = -1000;
-		if (!ip.equals("N/A")) { // if IP service unnavailable do not attempt to
+		if (ip != null && !ip.equals("N/A")) { // if IP service unnavailable do not attempt to
 									// look up location or temperature
 			try {
 				loc = fetchLocation(ip);
@@ -325,8 +322,10 @@ public class EventRepository {
 				ce.printStackTrace();
 				System.out.println("Connect exception");
 			}
-			if(!loc[1].equals("N/A") && !loc[1].equals(null) || loc[1].length() <= 1){// if loc service unnavailable do not attempt to look up temperature
+			if( loc[1] != null && !"N/A".equals(loc[1]) && loc[1].length() >= 1){// if loc service unnavailable do not attempt to look up temperature
 				try{
+					// TODO delete testing
+					System.out.println("Loc is := "+ loc[0] + "|" + loc[1]);
 					 temp = fetchTemperature(loc);
 					}catch(NullPointerException npe){
 						npe.printStackTrace();
@@ -351,8 +350,7 @@ public class EventRepository {
 		}
 		
 
-		// TODO delete testing
-		System.out.println("Loc is := "+ loc[0] + "|" + loc[1]);
+	
 		
 		
 		ArrayList<BrainwavesEvent> activeEvents = new ArrayList<BrainwavesEvent>();
@@ -394,8 +392,12 @@ public class EventRepository {
 			json = (JSONObject) jsonParser.parse(URLReader.read("http://freegeoip.net/json/" + ip));
 			loc[0] = (String) json.get("country_code");
 			loc[1] =  (String) json.get("city");
+			if (loc[0]!=null){
 			loc[0] = loc[0].replaceAll(" ", "_");
+			}
+			if (loc[1]!=null){
 			loc[1] = loc[1].replaceAll(" ", "_");
+			}
 			//TODO del
 			System.out.println(" Country is " + loc[0]);
 			
@@ -405,10 +407,14 @@ public class EventRepository {
 				json = (JSONObject) jsonParser.parse(URLReader.read("http://www.telize.com/geoip/" + ip));
 				loc[0] = (String) json.get("country_code");
 				loc[1] =  (String) json.get("city");
-				loc[0] = loc[0].replaceAll(" ", "_");
-				loc[1] = loc[1].replaceAll(" ", "_");
+				if (loc[0]!=null){
+					loc[0] = loc[0].replaceAll(" ", "_");
+					}
+					if (loc[1]!=null){
+					loc[1] = loc[1].replaceAll(" ", "_");
+					}
 				//TODO del
-				System.out.println(" Country is " + loc[0]);
+				System.out.println(" Country is " + loc[0] + " City is " + loc[1]);
 			}catch (Exception e2) {
 				e.printStackTrace();
 			}
@@ -758,41 +764,41 @@ public class EventRepository {
 	 */
 	public boolean searchEvent(BrainwavesEvent currentEvent, String searchString) {
 
-		if (currentEvent.getName().contains(searchString)) {
+		if (currentEvent.getName().contains(searchString) || currentEvent.getName().toLowerCase().contains(searchString.toLowerCase())) {
 			return true;
 		}
 		if (!currentEvent.getDate().equals("EMPTY")) {
-			if (currentEvent.getDate().contains(searchString)) {
+			if (currentEvent.getDate().contains(searchString)|| currentEvent.getDate().toLowerCase().contains(searchString.toLowerCase())) {
 				return true;
 			}
 		}
 		if (!currentEvent.getDay().equals("EMPTY")) {
-			if (currentEvent.getDay().contains(searchString)) {
+			if (currentEvent.getDay().contains(searchString)|| currentEvent.getDay().toLowerCase().contains(searchString.toLowerCase())) {
 				return true;
 			}
 		}
 		if (!currentEvent.getTime().equals("EMPTY")) {
-			if (currentEvent.getTime().contains(searchString)) {
+			if (currentEvent.getTime().contains(searchString)|| currentEvent.getTime().toLowerCase().contains(searchString.toLowerCase())) {
 				return true;
 			}
 		}
 		if (!currentEvent.getLocation().equals("EMPTY")) {
-			if (currentEvent.getLocation().contains(searchString)) {
+			if (currentEvent.getLocation().contains(searchString)|| currentEvent.getLocation().toLowerCase().contains(searchString.toLowerCase())) {
 				return true;
 			}
 		}
 		if (!currentEvent.getTemperature().equals("EMPTY")) {
-			if (currentEvent.getTemperature().contains(searchString)) {
+			if (currentEvent.getTemperature().contains(searchString)|| currentEvent.getTemperature().toLowerCase().contains(searchString.toLowerCase())) {
 				return true;
 			}
 		}
 		if (!currentEvent.getStock().equals("EMPTY")) {
-			if (currentEvent.getStock().contains(searchString)) {
+			if (currentEvent.getStock().contains(searchString)|| currentEvent.getStock().toLowerCase().contains(searchString.toLowerCase())) {
 				return true;
 			}
 		}
 		if (!currentEvent.getDescription().equals("EMPTY")) {
-			if (currentEvent.getDescription().contains(searchString)) {
+			if (currentEvent.getDescription().contains(searchString)|| currentEvent.getDescription().toLowerCase().contains(searchString.toLowerCase())) {
 				return true;
 			}
 		}
