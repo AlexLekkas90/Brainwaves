@@ -34,7 +34,7 @@ public class NewDescriptionView extends JDialog {
 	public NewDescriptionView(BrainwavesEvent event) {
 		this.setModalityType(ModalityType.APPLICATION_MODAL);
 		this.event = event;
-		setTitle("Date");
+		setTitle("Description");
 		setResizable(false);
 		setBounds(100, 100, 242, 163);
 		getContentPane().setLayout(null);

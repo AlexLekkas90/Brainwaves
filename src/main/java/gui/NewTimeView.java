@@ -37,7 +37,7 @@ public class NewTimeView extends JDialog {
 	public NewTimeView(BrainwavesEvent event) {
 		this.setModalityType(ModalityType.APPLICATION_MODAL);
 		this.event = event;
-		setTitle("Date");
+		setTitle("Time");
 		setResizable(false);
 		setBounds(100, 100, 225, 163);
 		getContentPane().setLayout(null);

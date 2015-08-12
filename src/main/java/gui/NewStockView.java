@@ -45,7 +45,7 @@ public class NewStockView extends JDialog {
 	public NewStockView(BrainwavesEvent event) {
 		this.setModalityType(ModalityType.APPLICATION_MODAL);
 		this.event = event;
-		setTitle("Date");
+		setTitle("Stock");
 		setResizable(false);
 		setBounds(100, 100, 267, 162);
 		getContentPane().setLayout(null);

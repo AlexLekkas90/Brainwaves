@@ -36,7 +36,7 @@ public class NewLocationView extends JDialog {
 	public NewLocationView(BrainwavesEvent event) {
 		this.setModalityType(ModalityType.APPLICATION_MODAL);
 		this.event = event;
-		setTitle("Date");
+		setTitle("Location");
 		setResizable(false);
 		setBounds(100, 100, 251, 162);
 		getContentPane().setLayout(null);

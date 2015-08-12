@@ -40,7 +40,7 @@ public class NewTemperatureView extends JDialog {
 	public NewTemperatureView(BrainwavesEvent event) {
 		this.setModalityType(ModalityType.APPLICATION_MODAL);
 		this.event = event;
-		setTitle("Date");
+		setTitle("Temperature");
 		setResizable(false);
 		setBounds(100, 100, 251, 162);
 		getContentPane().setLayout(null);
