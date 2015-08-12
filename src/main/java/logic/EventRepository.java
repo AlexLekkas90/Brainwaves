@@ -143,8 +143,13 @@ public class EventRepository {
 			String[] timeString = currentEvent.getTime().split(":");
 			String eventTimeConcat = timeString[0] + timeString[1];
 			currentCal = Calendar.getInstance();
+			int currentMin = currentCal.get(Calendar.MINUTE);
+			String currentMinString = "" + currentMin;
+			if(currentMin < 10){
+				currentMinString = "0" + currentMin;
+			}
 			String currentTimeConcat = currentCal.get(Calendar.HOUR_OF_DAY)
-					+ "" + currentCal.get(Calendar.MINUTE);
+					+ currentMinString;
 			if (Integer.parseInt(eventTimeConcat) <= Integer
 					.parseInt(currentTimeConcat)) {
 				conditionsLeft--;
@@ -177,8 +182,13 @@ public class EventRepository {
 			String[] timeString = currentEvent.getTime().split(":");
 			String eventTimeConcat = timeString[0] + timeString[1];
 			currentCal = Calendar.getInstance();
+			int currentMin = currentCal.get(Calendar.MINUTE);
+			String currentMinString = "" + currentMin;
+			if(currentMin < 10){
+				currentMinString = "0" + currentMin;
+			}
 			String currentTimeConcat = currentCal.get(Calendar.HOUR_OF_DAY)
-					+ "" + currentCal.get(Calendar.MINUTE);
+					+ currentMinString;
 			if (eventCal.get(Calendar.MONTH) == currentCal.get(Calendar.MONTH)
 					&& eventCal.get(Calendar.YEAR) == currentCal
 							.get(Calendar.YEAR)
@@ -196,8 +206,13 @@ public class EventRepository {
 			String[] timeString = currentEvent.getTime().split(":");
 			String eventTimeConcat = timeString[0] + timeString[1];
 			currentCal = Calendar.getInstance();
+			int currentMin = currentCal.get(Calendar.MINUTE);
+			String currentMinString = "" + currentMin;
+			if(currentMin < 10){
+				currentMinString = "0" + currentMin;
+			}
 			String currentTimeConcat = currentCal.get(Calendar.HOUR_OF_DAY)
-					+ "" + currentCal.get(Calendar.MINUTE);
+					+ currentMinString;
 			if (eventCal.get(Calendar.DAY_OF_MONTH) == currentCal
 					.get(Calendar.DAY_OF_MONTH)
 					&& Integer.parseInt(eventTimeConcat) <= Integer
@@ -217,8 +232,13 @@ public class EventRepository {
 			String[] timeString = currentEvent.getTime().split(":");
 			String eventTimeConcat = timeString[0] + timeString[1];
 			currentCal = Calendar.getInstance();
+			int currentMin = currentCal.get(Calendar.MINUTE);
+			String currentMinString = "" + currentMin;
+			if(currentMin < 10){
+				currentMinString = "0" + currentMin;
+			}
 			String currentTimeConcat = currentCal.get(Calendar.HOUR_OF_DAY)
-					+ "" + currentCal.get(Calendar.MINUTE);
+					+ currentMinString;
 			if (eventCal.get(Calendar.MONTH) == currentCal.get(Calendar.MONTH)
 					&& eventCal.get(Calendar.YEAR) == currentCal
 							.get(Calendar.YEAR)
