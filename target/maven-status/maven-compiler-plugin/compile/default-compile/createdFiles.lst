@@ -1,5 +1,6 @@
 main\java\gui\NewDateView.class
 main\java\logic\URLReader.class
+test\java\EventRepositoryTest.class
 main\java\gui\AdvancedSearchView.class
 main\java\gui\MainView$EventsKeyListener.class
 main\java\gui\NewEventView2$LeftListKeyListener.class

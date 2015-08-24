@@ -33,15 +33,12 @@ public class InfoPanelScheduler extends TimerTask {
 		String[] ipPair; // pair of 2 potential IP addresses
 		ipPair = IPFetcher.fetchIP();
 		String ip = "N/A"; // ip chosen
-		
-		System.out.println("REACHED STAGE 2.1");
 
 		if(!ipPair[0].equals("N/A")){ // select pair
 			ip = ipPair[0];
 		} else if(!ipPair[1].equals("N/A")){
 			ip = ipPair[1];
 		}
-		System.out.println("REACHED STAGE 2.2");
 		
 		String[] loc = {"N/A", "N/A"};// country/city pair
 		double temp = -1000;
@@ -56,22 +53,18 @@ public class InfoPanelScheduler extends TimerTask {
 			}
 		}
 		
-		System.out.println("REACHED STAGE 2.3");
-		// TODO delete testing
-		System.out.println("Loc is := " + loc[1]);
+
+
 		if (loc[1] == null || "N/A".equals(loc[1]) || loc[1].length() <= 1) {
 			lblLoc.setText("Location: N/A");
 		} else {
-			System.out.println("setting loc");
 			lblLoc.setText("Location: " + loc[1]);
 		}
-		System.out.println("REACHED STAGE 2.4");
 		if (temp == -1000) {
 			lblTemp.setText("Temperature: N/A");
 		} else {
 			lblTemp.setText("Temperature: " + temp + " °C");
 		}
-		System.out.println("REACHED STAGE 2.5");
 	}
 	
 //	private String[] fetchLocation(String ip){
@@ -102,8 +95,7 @@ public class InfoPanelScheduler extends TimerTask {
 			json = (JSONObject) jsonParser.parse(URLReader.read("http://freegeoip.net/json/" + ip));
 			loc[0] = (String) json.get("country_code");
 			loc[1] =  (String) json.get("city");
-			//TODO del
-			System.out.println(" Country is " + loc[0]);
+
 			
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -111,8 +103,6 @@ public class InfoPanelScheduler extends TimerTask {
 				json = (JSONObject) jsonParser.parse(URLReader.read("http://www.telize.com/geoip/" + ip));
 				loc[0] = (String) json.get("country_code");
 				loc[1] =  (String) json.get("city");
-				//TODO del
-				System.out.println(" Country is " + loc[0]);
 			}catch (Exception e2) {
 				e.printStackTrace();
 			}

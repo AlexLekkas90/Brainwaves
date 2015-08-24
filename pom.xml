@@ -23,7 +23,7 @@
         </descriptorRefs>
         <archive>
           <manifest>
-            <mainClass>gui.MainView</mainClass>
+            <mainClass>main.java.gui.MainView</mainClass>
           </manifest>
         </archive>
       </configuration>

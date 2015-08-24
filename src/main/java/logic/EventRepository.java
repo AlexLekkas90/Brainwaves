@@ -101,12 +101,8 @@ public class EventRepository {
 	 * TODO
 	 */
 	public boolean checkEvent(BrainwavesEvent currentEvent, String location, double currentTemp, Map<String, Stock> stocks) {
-		// TODO major part checking each event
-		// TODO call static method of MainView to add a text when an event is
-		// true
 
 		int conditionsLeft = currentEvent.getActiveConditions();
-		// TODO add this functionality to the event class?
 		Calendar currentCal = Calendar.getInstance();
 		Calendar eventCal = Calendar.getInstance();
 		;
@@ -284,7 +280,7 @@ public class EventRepository {
 			String stockSymbol = currentEvent.getStock().split(":")[1];
 			double eventStockPrice = Double.parseDouble(currentEvent.getStock().split(":")[2]);
 			Stock stock = stocks.get(stockName);
-			//TODO implement checking of stocks
+
 			if(stock.getQuote().getAsk().doubleValue() == 0 && stock.getQuote().getBid().doubleValue() == 0 && stock.getQuote().getPrice().doubleValue() == 0
 					 && stock.getQuote().getPreviousClose().doubleValue() == 0){ // 4 stock values at 0 most likely invalid stock
 				return false;
@@ -321,16 +317,13 @@ public class EventRepository {
 		ipPair = IPFetcher.fetchIP();
 		String ip = "N/A"; // ip chosen
 		
-		System.out.println("REACHED STAGE 1.1");
+
 		if(!ipPair[0].equals("N/A")){ // select pair
 			ip = ipPair[0];
 		} else if(!ipPair[1].equals("N/A")){
 			ip = ipPair[1];
 		}
-		System.out.println("REACHED STAGE 1.2");
-		
-		// TODO delete testing
-				System.out.println("IP of my system is := "+ ip);
+
 		
 		String[] loc = {"N/A", "N/A"};// country/city pair
 		double temp = -1000;
@@ -344,8 +337,6 @@ public class EventRepository {
 			}
 			if( loc[1] != null && !"N/A".equals(loc[1]) && loc[1].length() >= 1){// if loc service unnavailable do not attempt to look up temperature
 				try{
-					// TODO delete testing
-					System.out.println("Loc is := "+ loc[0] + "|" + loc[1]);
 					 temp = fetchTemperature(loc);
 					}catch(NullPointerException npe){
 						npe.printStackTrace();
@@ -353,7 +344,6 @@ public class EventRepository {
 			}
 		}
 		
-		System.out.println("REACHED STAGE 1.3");
 		
 		//get stock data in a map of <String, Stock> where String is the stock name
 		Map<String, Stock> stocks = new HashMap<String, Stock>();
@@ -364,7 +354,6 @@ public class EventRepository {
 		try {
 			stocks = YahooFinance.get(stockNamesArray);// single request for all stocks
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} 
 		}
@@ -384,7 +373,7 @@ public class EventRepository {
 		return activeEvents;
 	}
 	
-	//TODO comments
+
 //	private String[] fetchLocation(String ip){
 //		JSONParser jsonParser = new JSONParser();
 //		JSONObject json;
@@ -418,8 +407,7 @@ public class EventRepository {
 			if (loc[1]!=null){
 			loc[1] = loc[1].replaceAll(" ", "_");
 			}
-			//TODO del
-			System.out.println(" Country is " + loc[0]);
+
 			
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -474,7 +462,6 @@ public class EventRepository {
 //			loc[1] =  (String) json.get("city");
 //			loc[0] = loc[0].replaceAll(" ", "_");
 //			loc[1] = loc[1].replaceAll(" ", "_");
-//			//TODO del
 //			System.out.println(" Country is " + loc[0]);
 //			
 //		}catch (Exception e) {

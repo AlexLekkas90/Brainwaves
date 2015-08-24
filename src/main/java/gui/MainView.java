@@ -110,7 +110,7 @@ public class MainView extends JPanel{
 					Timer time = new Timer();
 					EventScheduler eventScheduler = new EventScheduler(// checks active events every specified time period
 							eventRepo);
-					time.schedule(eventScheduler, 0, 1800000); // set to desired
+					time.schedule(eventScheduler, 0, 600000); // set to desired
 																// miliseconds,
 																// 3600000 = 1h, 60000 = 1m
 					TimeScheduler timeScheduler = new TimeScheduler(lblDate, // makes sure date display information is accurate
@@ -121,7 +121,7 @@ public class MainView extends JPanel{
 					InfoPanelScheduler infoPanelScheduler = new InfoPanelScheduler(lblTemperature, lblLocation);
 					
 					
-					time.schedule(infoPanelScheduler, 0, 3600000);
+					time.schedule(infoPanelScheduler, 0, 600000);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
