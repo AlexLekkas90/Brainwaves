@@ -1,310 +1,190 @@
 package main.java.gui;
 
 import java.awt.FlowLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.sql.SQLException;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFormattedTextField;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SpinnerDateModel;
-import javax.swing.SpinnerListModel;
-import javax.swing.SpinnerModel;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.text.MaskFormatter;
-import javax.swing.JTextField;
-import javax.swing.JSpinner;
-import javax.swing.JSpinner.NumberEditor;
-import javax.swing.JCheckBox;
-
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
-import javax.swing.JTable;
-import javax.swing.JLabel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextArea;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.border.SoftBevelBorder;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.JLabel;
 
 import main.java.logic.BrainwavesEvent;
 import main.java.logic.EventRepository;
 
+
 /**
- * @author Alexandros Lekkas Event window that allows the user to add one new
+ * @author Alexandros Lekkas
+ *  Event window that allows the user to add one new
  *         event to the DB
  */
 public class NewEventView extends JDialog {
-
-	private static final long serialVersionUID = 1L;
-	private final JPanel contentPanel = new JPanel();
-	private JCheckBox boxDate;
-	private JCheckBox boxDay;
-	private JCheckBox boxTime;
-	private JSpinner dateSpinner;
-	private JSpinner daySpinner;
-	private JSpinner hourSpinner;
-	private JSpinner minuteSpinner;
-	private JSpinner symbolSpinner;
-	private JSpinner tempSpinner;
-	private JCheckBox boxTemp; // temperature selection box
-	private boolean selection = false; // checks whether at least one important
-										// element selected when trying to add
-										// an event
-	private JCheckBox boxLoc;
-	private JTextField locField;
 	private JTextField nameField;
-	private JTextField descField;
-	private JCheckBox boxDesc;
+	private DefaultListModel<String> leftListModel;
+	private JList<String> leftList; // holds conditions that have not been selected
+	private DefaultListModel<String> rightListModel;
+	private JList<String> rightList; // holds selected conditions
+	BrainwavesEvent event;
 	private MainView parent;
-	private JTextField stockNameField;
-	private JCheckBox boxStock;
-	private JSpinner stockSymbolSpinner;
-	private JFormattedTextField stockValueField;
+	private boolean selection = false; // checks whether at least one important
+	// element selected when trying to add
+	// an event
+	private String dateSide;
+	private String daySide;
+	private String timeSide;
+	private String temperatureSide;
+	private String locationSide;
+	private String stockSide;
+	private String descriptionSide;
 	private EventRepository eventRepo;
-	/**
-	 * Launch the application.
-	 */
-	// public static void main(String[] args) {
-	// try {
-	// NewEventView dialog = new NewEventView();
-	// dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-	// dialog.setVisible(true);
-	// dialog.requestFocus();
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// }
 
 	/**
 	 * Create the dialog.
 	 */
 	public NewEventView(MainView parent, EventRepository repo) {
-		this.setModalityType(ModalityType.APPLICATION_MODAL);//makes previous window not focusable
-		setTitle("New Event");
+		setResizable(false);
 		this.parent = parent;
 		eventRepo = repo;
-		setResizable(false);
-		setBounds(100, 100, 340, 354);
+		this.setModalityType(ModalityType.APPLICATION_MODAL);
+		setTitle("New Event");
+		setBounds(100, 100, 499, 372);
 		getContentPane().setLayout(null);
-		contentPanel.setBounds(0, 0, 0, 0);
-		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		getContentPane().add(contentPanel);
-		contentPanel.setLayout(null);
-		Calendar cal = Calendar.getInstance();
+		event = new BrainwavesEvent();
+
+		// Name textfield
+		CustomDocument document1 = new CustomDocument(20);
+		nameField = new JTextField(document1, "", 0);
+		nameField.setText("Event name");
+		nameField.setBounds(10, 11, 191, 26);
+		nameField.addFocusListener(new MyFocusListener());
+		getContentPane().add(nameField);
+		nameField.setColumns(10);
+		nameField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent key) {
+				char c = key.getKeyChar();
+				if (!(Character.isLetter(c) || (c == KeyEvent.VK_BACK_SPACE)
+						|| (c == KeyEvent.VK_DELETE)
+						|| (Character.isSpaceChar(c)) || Character.isDigit(c))) {
+					getToolkit().beep();
+					key.consume();
+				}
+
+			}
+		});
+
+		// Left List
+		JScrollPane leftListPane = new JScrollPane();
+		leftListPane.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null,
+				null, null));
+		leftListPane.setBounds(10, 84, 191, 172);
+		getContentPane().add(leftListPane);
+
+		leftListModel = new DefaultListModel<String>();
+		leftList = new JList<String>(leftListModel);
+		leftList.addMouseListener(new MyMouseListener());
+		leftList.addKeyListener(new LeftListKeyListener(leftList));
+		leftListPane.setViewportView(leftList);
+
+		// Right List
+		JScrollPane rightListPane = new JScrollPane();
+		rightListPane.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null,
+				null, null, null));
+		rightListPane.setBounds(293, 84, 191, 172);
+		getContentPane().add(rightListPane);
+
+		rightListModel = new DefaultListModel<String>();
+		rightList = new JList<String>(rightListModel);
+		rightList.addMouseListener(new MyMouseListener());
+		rightList.addKeyListener(new RightListKeyListener(rightList));
+		rightListPane.setViewportView(rightList);
+
 		{
 			JPanel buttonPane = new JPanel();
-			buttonPane.setBounds(28, 282, 296, 33);
+			buttonPane.setBounds(10, 300, 474, 33);
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane);
+
 			{
-				JButton addButton = new JButton("Add");
-				addButton.setActionCommand("Add");
-				buttonPane.add(addButton);
-				addButton.addActionListener(new MyActionListener());
+				JButton createButton = new JButton("Create");
+				createButton.setActionCommand("Create");
+				buttonPane.add(createButton);
+				createButton.addActionListener(new MyActionListener());
 				// getRootPane().setDefaultButton(addButton);
-			}
-			{
 				JButton cancelButton = new JButton("Cancel");
 				cancelButton.setActionCommand("Cancel");
-				buttonPane.add(cancelButton);
 				cancelButton.addActionListener(new MyActionListener());
-				{
-					// date spinner
-					cal.add(Calendar.MONTH, +1);
-					Date initDate = cal.getTime();
-					cal.add(Calendar.MONTH, -2);
-					Date earliestDate = cal.getTime();
-					cal.add(Calendar.MONTH, +2);
-					cal.add(Calendar.YEAR, 10);
-					Date latestDate = cal.getTime();
-					SpinnerModel dateModel = new SpinnerDateModel(initDate,
-							earliestDate, latestDate, Calendar.YEAR);
-					dateSpinner = new JSpinner(dateModel);
-					boxDate = new JCheckBox("Date:");
-					boxDate.setBounds(10, 59, 57, 20);
-					getContentPane().add(boxDate);
-					dateSpinner.setBounds(127, 59, 88, 26);
-					dateSpinner.setEditor(new JSpinner.DateEditor(dateSpinner,
-							"MM/yyyy"));
-					getContentPane().add(dateSpinner);
+				buttonPane.add(cancelButton);
+			}
+			{
 
-					// day spinner
-					SpinnerModel dayModel = new SpinnerNumberModel(1, 1, 31, 1);
-					daySpinner = new JSpinner(dayModel);
-					boxDay = new JCheckBox("Day:");
-					boxDay.setBounds(10, 90, 57, 20);
-					getContentPane().add(boxDay);
-					daySpinner.setBounds(127, 90, 88, 26);
-					NumberEditor ne_daySpinner = new JSpinner.NumberEditor(
-							daySpinner, "00");
-					ne_daySpinner.setToolTipText("");
-					daySpinner.setEditor(ne_daySpinner);
-					getContentPane().add(daySpinner);
+				// Buttons
+				JButton btnAdd = new JButton("Add");
+				btnAdd.setActionCommand("Add");
+				btnAdd.setBounds(211, 84, 72, 23);
+				getContentPane().add(btnAdd);
+				btnAdd.addActionListener(new MyActionListener());
 
-					// time spinner
-					SpinnerModel hourModel = new SpinnerNumberModel(0, 0, 23, 1);
-					SpinnerModel minuteModel = new SpinnerNumberModel(0, 0, 59,
-							1);
-					hourSpinner = new JSpinner(hourModel);
-					minuteSpinner = new JSpinner(minuteModel);
-					boxTime = new JCheckBox("Time:");
-					boxTime.setBounds(10, 121, 57, 20);
-					getContentPane().add(boxTime);
-					hourSpinner.setBounds(127, 121, 42, 26);
-					minuteSpinner.setBounds(173, 121, 42, 26);
-					NumberEditor ne_hourSpinner = new JSpinner.NumberEditor(
-							hourSpinner, "#");
-					ne_hourSpinner.setToolTipText("");
-					hourSpinner.setEditor(ne_hourSpinner);
-					getContentPane().add(hourSpinner);
-					NumberEditor ne_minuteSpinner = new JSpinner.NumberEditor(
-							minuteSpinner, "00");
-					ne_minuteSpinner.setToolTipText("");
-					minuteSpinner.setEditor(ne_minuteSpinner);
-					getContentPane().add(minuteSpinner);
+				JButton btnRemove = new JButton("Remove");
+				btnRemove.setActionCommand("Remove");
+				btnRemove.setBounds(211, 117, 72, 23);
+				getContentPane().add(btnRemove);
+				btnRemove.addActionListener(new MyActionListener());
 
-					// location textfield
-					CustomDocument document2 = new CustomDocument(30);
-					locField = new JTextField(document2, "", 0);
-					locField.addKeyListener(new KeyAdapter() {
-						@Override
-						public void keyTyped(KeyEvent key) {
-							char c = key.getKeyChar();
-							if (!(Character.isLetter(c)
-									|| (c == KeyEvent.VK_BACK_SPACE)
-									|| (c == KeyEvent.VK_DELETE) || (Character
-									.isSpaceChar(c)))) {
-								getToolkit().beep();
-								key.consume();
-							}
+				JButton btnClear = new JButton("Clear");
+				btnClear.setActionCommand("Clear");
+				btnClear.setBounds(211, 233, 72, 23);
+				getContentPane().add(btnClear);
+				btnClear.addActionListener(new MyActionListener());
 
-						}
-					});
-					boxLoc = new JCheckBox("Location:");
-					boxLoc.setBounds(10, 152, 88, 20);
-					getContentPane().add(boxLoc);
-					locField.setBounds(127, 152, 111, 26);
-					getContentPane().add(locField);
+				JButton btnEdit = new JButton("Edit");
+				btnEdit.setActionCommand("Edit");
+				btnEdit.setBounds(211, 151, 72, 23);
+				getContentPane().add(btnEdit);
 
-					// temperature spinner
-					SpinnerModel symbolModel = new SpinnerListModel(
-							new ArrayList<String>(Arrays.asList("<", ">")));
-					SpinnerModel tempModel = new SpinnerNumberModel(0, -30, 60,
-							1);
-					symbolSpinner = new JSpinner(symbolModel);
-					tempSpinner = new JSpinner(tempModel);
-					boxTemp = new JCheckBox("Temperature:");
-					boxTemp.setBounds(10, 183, 111, 20);
-					getContentPane().add(boxTemp);
-					symbolSpinner.setBounds(127, 183, 42, 26);
-					tempSpinner.setBounds(173, 183, 42, 26);
-					getContentPane().add(symbolSpinner);
-					NumberEditor ne_tempSpinner = new JSpinner.NumberEditor(
-							tempSpinner, "#");
-					ne_tempSpinner.setToolTipText("");
-					tempSpinner.setEditor(ne_tempSpinner);
-					getContentPane().add(tempSpinner);
+				JLabel lblAvailableConditions = new JLabel(
+						"Available conditions");
+				lblAvailableConditions.setBounds(10, 59, 122, 14);
+				getContentPane().add(lblAvailableConditions);
+				
+				JLabel lblSelectedConditions = new JLabel("Selected conditions");
+				lblSelectedConditions.setBounds(293, 59, 122, 14);
+				getContentPane().add(lblSelectedConditions);
+				btnEdit.addActionListener(new MyActionListener());
 
-					// Name textfield
-					CustomDocument document1 = new CustomDocument(20);
-					nameField = new JTextField(document1, "", 0);
-					nameField.setText("Event name");
-					nameField.setBounds(10, 11, 191, 26);
-					nameField.addFocusListener(new MyFocusListener());
-					getContentPane().add(nameField);
-					nameField.setColumns(10);
-					nameField.addKeyListener(new KeyAdapter() {
-						@Override
-						public void keyTyped(KeyEvent key) {
-							char c = key.getKeyChar();
-							if (!(Character.isLetter(c)
-									|| (c == KeyEvent.VK_BACK_SPACE)
-									|| (c == KeyEvent.VK_DELETE) || (Character
-									.isSpaceChar(c)) || Character.isDigit(c))) {
-								getToolkit().beep();
-								key.consume();
-							}
-
-						}
-					});
-
-					// Description textfield
-					CustomDocument document3 = new CustomDocument(50);
-					descField = new JTextField(document3, "", 0);
-					boxDesc = new JCheckBox("Description:");
-					boxDesc.setBounds(10, 245, 97, 20);
-					getContentPane().add(boxDesc);
-					descField.setBounds(127, 245, 111, 26);
-					getContentPane().add(descField);
-					
-					
-					//Stock data
-					CustomDocument document4 = new CustomDocument(5);
-					stockNameField = new JTextField(document4, "", 0);
-					stockNameField.addKeyListener(new KeyAdapter() {
-						@Override
-						public void keyTyped(KeyEvent key) {
-							char c = key.getKeyChar();
-							if (!(Character.isLetter(c) || Character.isDigit(c)
-									|| (c == KeyEvent.VK_BACK_SPACE)
-									|| (c == KeyEvent.VK_DELETE) || (Character
-									.isSpaceChar(c)))) {
-								getToolkit().beep();
-								key.consume();
-							}
-
-						}
-					});
-					CustomDocument document5 = new CustomDocument(10);
-					stockValueField = new JFormattedTextField(NumberFormat.getNumberInstance());
-					stockValueField.setDocument(document5);
-					stockValueField .setValue(new Double(0));
-					
-					stockValueField .setColumns(2);
-					
-					boxStock = new JCheckBox("Stock:");
-					boxStock.setBounds(10, 214, 88, 20);
-					getContentPane().add(boxStock);
-					stockNameField.setBounds(127, 214, 42, 26);
-					getContentPane().add(stockNameField);
-					stockValueField.setBounds(219, 214, 42, 26);
-					getContentPane().add(stockValueField);
-					SpinnerModel stockSymbolModel = new SpinnerListModel(
-							new ArrayList<String>(Arrays.asList("<", ">")));
-					stockSymbolSpinner = new JSpinner(stockSymbolModel);
-					stockSymbolSpinner.setBounds(173, 214, 42, 26);
-					getContentPane().add(stockSymbolSpinner);
-	
-				}
 			}
 		}
+
+		// initialise elements
+		iniLists();
+
 	}
 
-
-
-	/**
-	 * @author Alexandros Lekkas Action listener class for the add event and
-	 *         cancel buttons.
-	 */
 	private class MyActionListener implements ActionListener {
+
+		
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -312,51 +192,139 @@ public class NewEventView extends JDialog {
 			if (action.equals("Cancel")) {
 				setVisible(false);
 				dispose();
-			} else if (action.equals("Add")) {
-					Integer dayInteger = (Integer) daySpinner.getValue();
-					int day = dayInteger.intValue();
-					
-					//check whether date & day combo is not in the past
-					if (boxDate.isSelected() && boxDay.isSelected()) {
-						Calendar todayCal = new GregorianCalendar();
-						todayCal = Calendar.getInstance();
-						int thisYear = todayCal.get(Calendar.YEAR);
-						int thisMonth = todayCal.get(Calendar.MONTH); //0-11
-						int thisDay = todayCal.get(Calendar.DAY_OF_MONTH);
-						
-						Date selectedDate = (Date) dateSpinner.getValue();
-						Calendar selectedCal = new GregorianCalendar();
-						selectedCal.setTime(selectedDate);
-						selectedCal.set(Calendar.DAY_OF_MONTH,(Integer)daySpinner.getValue());
-						int selectedYear = selectedCal.get(Calendar.YEAR);
-						int selectedMonth = selectedCal.get(Calendar.MONTH);
-						int selectedDay = selectedCal.get(Calendar.DAY_OF_MONTH);
-						
-					
-						
-						if(thisYear == selectedYear && thisMonth == selectedMonth && thisDay > selectedDay){
-							JOptionPane.showMessageDialog(null,
-									"Please set a future date and day combination", "Warning",
-									JOptionPane.WARNING_MESSAGE);
-							return;
-						}
-						
+			} else if (action.equals("Add")) {//add element from left to right list
+
+				int index = 0;
+
+				index = leftList.getSelectedIndex();
+				if (!(index == -1)) {// if not empty list
+					// remove from leftlist
+					String leftListElement = leftList.getSelectedValue();
+					leftListModel.remove(index);
+					if (leftListElement.equals("Date")) {
+						dateSide = "right";
+					} else if (leftListElement.equals("Day")) {
+						daySide = "right";
+					} else if (leftListElement.equals("Time")) {
+						timeSide = "right";
+					} else if (leftListElement.equals("Temperature")) {
+						temperatureSide = "right";
+					} else if (leftListElement.equals("Location")) {
+						locationSide = "right";
+					} else if (leftListElement.equals("Stock price")) {
+						stockSide = "right";
+					} else if (leftListElement.equals("Description")) {
+						descriptionSide = "right";
 					}
+
+					// add to rightlist
+					int pos = rightList.getModel().getSize();
+					rightListModel.add(pos, leftListElement);
+				}
+
+			} else if (action.equals("Remove")) {//remove element from right list, add to left list
+				int index = 0;
+
+				index = rightList.getSelectedIndex();
+				if (!(index == -1)) {// if not empty list
+					// remove from rightlist
+					String rightListElement = rightList.getSelectedValue();
+					rightListModel.remove(index);
+					if (rightListElement.equals("Date")) {
+						event.setDate("EMPTY");
+						dateSide = "left";
+					} else if (rightListElement.equals("Day")) {
+						event.setDay("EMPTY");
+						daySide = "left";
+					} else if (rightListElement.equals("Time")) {
+						event.setTime("EMPTY");
+						timeSide = "left";
+					} else if (rightListElement.equals("Temperature")) {
+						event.setTemperature("EMPTY");
+						temperatureSide = "left";
+					} else if (rightListElement.equals("Location")) {
+						event.setLocation("EMPTY");
+						locationSide = "left";
+					} else if (rightListElement.equals("Stock price")) {
+						event.setStock("EMPTY");
+						stockSide = "left";
+					} else if (rightListElement.equals("Description")) {
+						event.setDescription("EMPTY");
+						descriptionSide = "left";
+					}
+
+					if (rightList.getModel().getSize() == 0
+							|| (rightList.getModel().getSize() == 1 && rightListElement
+									.equals("Description"))) {
+						selection = false;
+					}
+
+					// add to leftlist
+					int pos = leftList.getModel().getSize();
+					leftListModel.add(pos, rightListElement);
+				}
+
+			} else if (action.equals("Clear")) {//clear all elements off right list
+				iniLists();
+				event = new BrainwavesEvent();
+
+			} else if (action.equals("Edit")) {//edit element in right list, used to add data to an event
+				int index = 0;
+
+				index = rightList.getSelectedIndex();
+				if (!(index == -1)) {// if not empty list
+					openWindow(rightList);
+				}
+			} else if (action.equals("Create")) {//create the event if all selected right list items have been filled in
+
+				// check whether date & day combo is not in the past
+				if (event.getDate() != "EMPTY" && event.getDay() != "EMPTY") {
+					Integer dayInteger = Integer.parseInt(event.getDay());
+					int day = dayInteger.intValue();
+
+					// check whether date & day combo is not in the past
+					Calendar todayCal = new GregorianCalendar();
+					todayCal = Calendar.getInstance();
+					int thisYear = todayCal.get(Calendar.YEAR);
+					int thisMonth = todayCal.get(Calendar.MONTH); // 0-11
+					int thisDay = todayCal.get(Calendar.DAY_OF_MONTH);
+
+					String date = event.getDate();
+					String[] splitDate = date.split("/");
+					Calendar selectedCal = new GregorianCalendar();
+					selectedCal.set(Calendar.MONTH,
+							Integer.parseInt(splitDate[0]) - 1);
+					selectedCal.set(Calendar.YEAR,
+							Integer.parseInt(splitDate[1]));
+					selectedCal.set(Calendar.DAY_OF_MONTH, day);
+					int selectedYear = selectedCal.get(Calendar.YEAR);
+					int selectedMonth = selectedCal.get(Calendar.MONTH);
+					int selectedDay = selectedCal.get(Calendar.DAY_OF_MONTH);
+
+					if (thisYear == selectedYear && thisMonth == selectedMonth
+							&& thisDay > selectedDay) {
+						JOptionPane.showMessageDialog(null,
+								"Please set a future date and day combination",
+								"Warning", JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+
 					// first check validity of date if date/day combo has been
 					// selected
-					if (boxDate.isSelected() && boxDay.isSelected() && day > 10) {
+					if (day > 10) {
 						// get date and day values from the spinners
-						Date date = (Date) dateSpinner.getValue();
+
 						Calendar cal = new GregorianCalendar();
-						cal.setTime(date);
+						cal.set(Calendar.MONTH,
+								Integer.parseInt(splitDate[0]) - 1);
+						cal.set(Calendar.YEAR, Integer.parseInt(splitDate[1]));
 						SimpleDateFormat sf = new SimpleDateFormat("ddMMMyyyy");
 						sf.setLenient(false);
 						int monthNumber = cal.get(Calendar.MONTH);
 						String month = parent.getMonth(monthNumber);
 						int year = cal.get(Calendar.YEAR);
-						String formatted = "" + daySpinner.getValue()
-								+ month.charAt(0) + month.charAt(1)
-								+ month.charAt(2) + year;
+						String formatted = "" + day + month.charAt(0)
+								+ month.charAt(1) + month.charAt(2) + year;
 						try {
 							// parse formatted string, if incorrect catch
 							// exception
@@ -364,131 +332,135 @@ public class NewEventView extends JDialog {
 
 						} catch (ParseException pe) {
 							JOptionPane.showMessageDialog(null,
-									"Invalid Date & Day combination", "Error",
-									JOptionPane.ERROR_MESSAGE);
-							return;
-						}
-					}
-
-					BrainwavesEvent event = new BrainwavesEvent(); // empty
-																	// event
-																	// with all
-																	// fields
-																	// set to
-																	// EMPTY by
-																	// default
-
-					// set event fields according to selected spinners
-					if (boxDate.isSelected()) {
-						// note: the calendar month representation is 0-11, the
-						// event class representation however stores a month as
-						// 1-12
-						Date date2 = (Date) dateSpinner.getValue();
-						Calendar cal2 = new GregorianCalendar();
-						cal2.setTime(date2);
-						int monthNumber2 = cal2.get(Calendar.MONTH) + 1;
-						int year2 = cal2.get(Calendar.YEAR);
-						if (monthNumber2 < 10) {
-							event.setDate("0" + monthNumber2 + "/" + year2);
-						} else {// preserve the 0
-							event.setDate("" + monthNumber2 + "/" + year2);
-						}
-						selection = true;
-					}
-					if (boxDay.isSelected()) {
-						Integer day2 = (Integer) daySpinner.getValue();
-						String dayString = String.format("%02d", day2);
-						event.setDay(dayString);
-						selection = true;
-					}
-					if (boxTime.isSelected()) {
-						Integer hour = (Integer) hourSpinner.getValue();
-						Integer minute = (Integer) minuteSpinner.getValue();
-						String timeString = "" + hour.intValue() + ":"
-								+ String.format("%02d", minute);
-						event.setTime(timeString);
-						selection = true;
-					}
-					if (boxTemp.isSelected()) {
-						String symbol = (String) symbolSpinner.getValue();
-						Integer temp = (Integer) tempSpinner.getValue();
-						String tempString = "" + symbol + ":" + temp.intValue();
-						event.setTemperature(tempString);
-						selection = true;
-					}
-					if (boxLoc.isSelected()) {
-						String location = (String) locField.getText();
-						location = location.trim();
-						if(location.equals("") || location.equals(" ")){
-							JOptionPane.showMessageDialog(null,
-									"Please enter a location",
+									"Invalid Date & Day combination",
 									"Warning", JOptionPane.WARNING_MESSAGE);
 							return;
 						}
-							
-						event.setLocation(location);
-						selection = true;
-					}
-					if(boxStock.isSelected()){
-						String stockName = stockNameField.getText();
-						stockName = stockName.trim();
-						String stockSymbol = (String) stockSymbolSpinner.getValue();
-						String stockValue = stockValueField.getText();
-						event.setStock(stockName + ":" + stockSymbol + ":" + stockValue);
-						selection = true;
-					}
-					if (boxDesc.isSelected()) {
-						String description = (String) descField.getText();
-						event.setDescription(description);
 					}
 
-					if (selection) {// make sure at least one element selected
-						String name = nameField.getText().trim();
-						if (name.equals("Event name") || name.equals("")) {
-							JOptionPane.showMessageDialog(null,
-									"Please enter a name for the event",
-									"Warning", JOptionPane.WARNING_MESSAGE);
-						} else if(boxStock.isSelected() && (event.getStock().split(":")[0].equals("") || event.getStock().split(":")[0].equals(" "))){
-							JOptionPane.showMessageDialog(null,
-									"Please enter a name for the stock",
-									"Warning", JOptionPane.WARNING_MESSAGE);
-						
-						}else {
-						
-							try {
-								event.setName(name);
-								eventRepo.sendToDB(event); // send the event to the
-													// database
-								parent.addEventToRepo(event);
-								if (EventRepository.checkUpcomingEvent(event)) {
-									MainView.addToUpcomingEvents(event); // add
-																			// event
-																			// to
-																			// the
-																			// upcoming
-																			// events
-								}
-								setVisible(false);
-								dispose();
-							} catch (SQLException sqle) {
-								JOptionPane.showMessageDialog(null,
-										"Please enter a unique name",
-										"Warning", JOptionPane.WARNING_MESSAGE);
-							}
-						}
-					} else {
+				}
+
+				// check whether all elements in right list have been filled in
+				if (event.getDate() != "EMPTY") {
+					selection = true;
+				} else if (dateSide.equals("right")) {
+					JOptionPane.showMessageDialog(null, "Please set the date",
+							"Warning", JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+				if (event.getDay() != "EMPTY") {
+					selection = true;
+				} else if (daySide.equals("right")) {
+					JOptionPane.showMessageDialog(null, "Please set the day",
+							"Warning", JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+				if (event.getTime() != "EMPTY") {
+					selection = true;
+				} else if (timeSide.equals("right")) {
+					JOptionPane.showMessageDialog(null, "Please set the time",
+							"Warning", JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+				if (event.getTemperature() != "EMPTY") {
+					selection = true;
+				} else if (temperatureSide.equals("right")) {
+					JOptionPane.showMessageDialog(null,
+							"Please set the temperature", "Warning",
+							JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+				if (event.getLocation() != "EMPTY") {
+					selection = true;
+				} else if (locationSide.equals("right")) {
+					JOptionPane.showMessageDialog(null,
+							"Please set the location", "Warning",
+							JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+				if (event.getStock() != "EMPTY") {
+					selection = true;
+				} else if (stockSide.equals("right")) {
+					JOptionPane.showMessageDialog(null, "Please set the stock",
+							"Warning", JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+				if (event.getDescription() == "EMPTY"
+						&& descriptionSide.equals("right")) {
+					JOptionPane.showMessageDialog(null,
+							"Please set the description", "Warning",
+							JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+
+				if (selection) {// make sure at least one element selected
+					String name = nameField.getText().trim();
+					if (name.equals("Event name") || name.equals("")) {
 						JOptionPane.showMessageDialog(null,
-								"Please select at least one condition",
-								"Warning", JOptionPane.WARNING_MESSAGE);
+								"Please enter a name for the event", "Warning",
+								JOptionPane.WARNING_MESSAGE);
+					} else {
+
+						try {
+							event.setName(name);
+							eventRepo.sendToDB(event); // send the event to the
+												// database
+							parent.addEventToRepo(event);
+							if (EventRepository.checkUpcomingEvent(event)) {
+								MainView.addToUpcomingEvents(event); // add
+																		// event
+																		// to
+																		// the
+																		// upcoming
+																		// events
+							}
+							setVisible(false);
+							dispose();
+						} catch (SQLException sqle) {
+							JOptionPane.showMessageDialog(null,
+									"Please enter a unique name", "Warning",
+									JOptionPane.WARNING_MESSAGE);
+						}
 					}
+				} else {
+					JOptionPane.showMessageDialog(null,
+							"Please select at least one condition", "Warning",
+							JOptionPane.WARNING_MESSAGE);
+				}
 
 			}
 		}
 	}
 
+	
+	
 	/**
-	 * @author Alexandros Lekkas Focus listener for the name field, adds focus
-	 *         behaviour
+	 * Initialise left list
+	 */
+	private void iniLists() {
+		rightListModel.clear();
+		leftListModel.clear();
+		leftListModel.addElement("Date");
+		leftListModel.addElement("Day");
+		leftListModel.addElement("Time");
+		leftListModel.addElement("Location");
+		leftListModel.addElement("Temperature");
+		leftListModel.addElement("Stock price");
+		leftListModel.addElement("Description");
+		dateSide = "left";
+		daySide = "left";
+		timeSide = "left";
+		temperatureSide = "left";
+		locationSide = "left";
+		stockSide = "left";
+		descriptionSide = "left";
+
+	}
+
+	/**
+	 * 
+	 * @author Alexandros Lekkas
+	 * Adds focus behaviour to textfields
 	 */
 	class MyFocusListener implements FocusListener {
 		@Override
@@ -506,5 +478,180 @@ public class NewEventView extends JDialog {
 		}
 	}
 
+	/**
+	 * 
+	 * @author Alexandros Lekkas
+	 *	Main clicking behaviour for left and right lists
+	 */
+	class MyMouseListener implements MouseListener {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+		}
 
+		@Override
+		public void mouseEntered(MouseEvent arg0) {
+		}
+
+		@Override
+		public void mouseExited(MouseEvent arg0) {
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			if (e.getClickCount() == 2 && !e.isConsumed()) {
+				e.consume();
+				JList list = (JList) e.getSource();
+				int index = 0;
+				if (list.equals(leftList)) {
+					index = leftList.locationToIndex(e.getPoint());
+					if (!(index == -1)) {// if not empty list
+						// remove from leftlist
+						String leftListElement = leftList.getSelectedValue();
+						leftListModel.remove(index);
+						if (leftListElement.equals("Date")) {
+							dateSide = "right";
+						} else if (leftListElement.equals("Day")) {
+							daySide = "right";
+						} else if (leftListElement.equals("Time")) {
+							timeSide = "right";
+						} else if (leftListElement.equals("Temperature")) {
+							temperatureSide = "right";
+						} else if (leftListElement.equals("Location")) {
+							locationSide = "right";
+						} else if (leftListElement.equals("Stock price")) {
+							stockSide = "right";
+						} else if (leftListElement.equals("Description")) {
+							descriptionSide = "right";
+						}
+
+						// add to rightlist
+						int pos = rightList.getModel().getSize();
+						rightListModel.add(pos, leftListElement);
+
+					}
+				} else {
+					index = rightList.locationToIndex(e.getPoint());
+					// open window with selected condition to enter data
+					openWindow(rightList);
+
+				}
+			}
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+		}
+	}
+
+	/**
+	 * 
+	 * @author Alexandros Lekkas
+	 *	Key behaviour for left list
+	 */
+	public class LeftListKeyListener extends KeyAdapter {
+		private JList<String> list = null;
+
+		public LeftListKeyListener(JList<String> leftList) {
+			super();
+			this.list = leftList;
+		}
+
+		public void keyPressed(KeyEvent ke) {
+			if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
+				String selectionItem = (String) list.getSelectedValue();
+				// remove from leftlist
+				String leftListElement = leftList.getSelectedValue();
+				leftListModel.removeElement(leftListElement); // TODO test
+				if (leftListElement.equals("Date")) {
+					dateSide = "right";
+				} else if (leftListElement.equals("Day")) {
+					daySide = "right";
+				} else if (leftListElement.equals("Time")) {
+					timeSide = "right";
+				} else if (leftListElement.equals("Temperature")) {
+					temperatureSide = "right";
+				} else if (leftListElement.equals("Location")) {
+					locationSide = "right";
+				} else if (leftListElement.equals("Stock price")) {
+					stockSide = "right";
+				} else if (leftListElement.equals("Description")) {
+					descriptionSide = "right";
+				}
+
+				// add to rightlist
+				int pos = rightList.getModel().getSize();
+				rightListModel.add(pos, leftListElement);
+
+			}
+		}
+	}
+
+	/**
+	 * 
+	 * @author Alexandros Lekkas
+	 * Key behaviour for right list
+	 */
+	public class RightListKeyListener extends KeyAdapter {
+		private JList<String> list = null;
+
+		public RightListKeyListener(JList<String> leftList) {
+			super();
+			this.list = rightList;
+		}
+
+		public void keyPressed(KeyEvent ke) {
+			if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
+				String selectionItem = (String) list.getSelectedValue();
+				openWindow(rightList);
+
+			}
+		}
+	}
+
+	/**
+	 * Opens a window when activating a right list element in order to fill in the condition data
+	 * @param rightList the list of selected conditions
+	 */
+	private void openWindow(JList<String> rightList) {
+		String rightListElement = rightList.getSelectedValue();
+		if (rightListElement.equals("Date")) {
+			NewDateView newDateView = new NewDateView(event);
+			newDateView.setVisible(true);
+			newDateView.requestFocus();
+
+		} else if (rightListElement.equals("Day")) {
+			NewDayView newDayView = new NewDayView(event);
+			newDayView.setVisible(true);
+			newDayView.requestFocus();
+
+		} else if (rightListElement.equals("Time")) {
+			NewTimeView newTimeView = new NewTimeView(event);
+			newTimeView.setVisible(true);
+			newTimeView.requestFocus();
+
+		} else if (rightListElement.equals("Location")) {
+			NewLocationView newLocationView = new NewLocationView(event);
+			newLocationView.setVisible(true);
+			newLocationView.requestFocus();
+
+		} else if (rightListElement.equals("Temperature")) {
+			NewTemperatureView newTemperatureView = new NewTemperatureView(
+					event);
+			newTemperatureView.setVisible(true);
+			newTemperatureView.requestFocus();
+
+		} else if (rightListElement.equals("Stock price")) {
+			NewStockView newStockView = new NewStockView(event);
+			newStockView.setVisible(true);
+			newStockView.requestFocus();
+
+		} else if (rightListElement.equals("Description")) {
+			NewDescriptionView newDescriptionView = new NewDescriptionView(
+					event);
+			newDescriptionView.setVisible(true);
+			newDescriptionView.requestFocus();
+
+		}
+
+	}
 }

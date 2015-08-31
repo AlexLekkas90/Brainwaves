@@ -332,7 +332,7 @@ public class MainView extends JPanel{
 				System.exit(0);
 			} else if (action.equals("New event")) {
 				
-				NewEventView2 newEventWindow = new NewEventView2(MainView.this, eventRepo);
+				NewEventView newEventWindow = new NewEventView(MainView.this, eventRepo);
 				newEventWindow.setVisible(true);
 				newEventWindow.requestFocus();
 //				NewEventView newEventWindow = new NewEventView(MainView.this);

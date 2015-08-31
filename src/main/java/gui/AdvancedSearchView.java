@@ -17,6 +17,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.TimeZone;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -98,18 +99,17 @@ public class AdvancedSearchView extends JDialog {
 		Date latestDate = cal.getTime();
 
 		{
-			new SpinnerDateModel(initDate,
-					earliestDate, latestDate, Calendar.YEAR);
+
 			SpinnerModel dateModel2 = new SpinnerDateModel(initDate,
 					earliestDate, latestDate, Calendar.YEAR);
-			cal = Calendar.getInstance();
-			cal.add(Calendar.MONTH, +2);
-			Date initDate2 = cal.getTime();
-			cal.add(Calendar.MONTH, -2);
-			Date earliestDate2 = cal.getTime();
-			cal.add(Calendar.MONTH, +3);
-			cal.add(Calendar.YEAR, 10);
-			Date latestDate2 = cal.getTime();
+			Calendar cal2 = Calendar.getInstance();
+			cal2.add(Calendar.MONTH, +2);
+			Date initDate2 = cal2.getTime();
+			cal2.add(Calendar.MONTH, -2);//was2
+			Date earliestDate2 = cal2.getTime();
+			cal2.add(Calendar.MONTH, +3);
+			cal2.add(Calendar.YEAR, 10);
+			Date latestDate2 = cal2.getTime();
 			SpinnerModel dateModel3 = new SpinnerDateModel(initDate2,
 					earliestDate2, latestDate2, Calendar.YEAR);
 			JPanel buttonPane = new JPanel();
@@ -143,15 +143,7 @@ public class AdvancedSearchView extends JDialog {
 			dateRangeSpinner2.setBounds(249, 11, 88, 26);
 			dateRangeSpinner2.setEditor(new JSpinner.DateEditor(
 					dateRangeSpinner2, "MM/yyyy"));
-			cal.add(Calendar.MONTH, +1);
-			Date initDate1 = cal.getTime();
-			cal.add(Calendar.MONTH, -2);
-			Date earliestDate1 = cal.getTime();
-			cal.add(Calendar.MONTH, +2);
-			cal.add(Calendar.YEAR, 10);
-			Date latestDate1 = cal.getTime();
-			new SpinnerDateModel(initDate1,
-					earliestDate1, latestDate1, Calendar.YEAR);
+
 
 			  
 			
@@ -332,6 +324,8 @@ public class AdvancedSearchView extends JDialog {
 					}
 					if(boxDateRange.isSelected()){
 						if (!currentEvent.getDate().equals("EMPTY")) {
+							TimeZone tz = TimeZone.getTimeZone("GMT");
+							TimeZone.setDefault(tz);
 							Calendar eventCal = Calendar.getInstance();
 							Calendar cal1, cal2;
 							cal1 = new GregorianCalendar();
@@ -347,9 +341,14 @@ public class AdvancedSearchView extends JDialog {
 							cal2.set(Calendar.SECOND, 0);
 							cal2.set(Calendar.DAY_OF_MONTH, 1);
 							String[] dateString = currentEvent.getDate().split("/");
-							eventCal.set(Calendar.MONTH, Integer.parseInt(dateString[0]) - 1);
 							eventCal.set(Calendar.YEAR, Integer.parseInt(dateString[1]));
-							if (eventCal.after(cal1) && eventCal.before(cal2)) {
+							int eventMonth = Integer.parseInt(dateString[0]);
+							eventMonth--;
+							eventCal.set(Calendar.MONTH, eventMonth);
+							eventCal.set(Calendar.MONTH, eventCal.get(Calendar.MONTH) -1);
+
+							if((eventCal.after(cal1)) && (eventCal.before(cal2))){
+								System.out.println("between");
 								numOfMatches ++;
 							}}
 						}

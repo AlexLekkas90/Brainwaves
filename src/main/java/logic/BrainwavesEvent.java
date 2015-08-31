@@ -20,7 +20,6 @@ public class BrainwavesEvent {
 	private String stock;
 	private String description;
 	private int activeConditions;
-	private static int totalConditions = 6;
 
 	/**
 	 * Constructor for an empty event
